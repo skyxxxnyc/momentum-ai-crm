@@ -71,6 +71,18 @@
 - [x] Mobile-responsive AI insights and collateral pages
 - [x] Responsive breakpoints (sm, md, lg) across all pages
 
+## Real-time Notifications
+- [x] WebSocket server setup with Socket.IO
+- [x] Notification event types (deal updates, task assignments, AI insights)
+- [x] Real-time notification broadcasting
+- [x] Notification UI component with bell icon and dropdown
+- [x] Notification persistence in database
+- [x] Mark as read/unread functionality
+- [x] Live notification toasts
+- [x] Unread count badge
+- [x] WebSocket context provider
+- [x] NotificationCenter component in header
+
 ## Integrations (Ready for Configuration)
 - [x] Resend integration (needs RESEND_API_KEY)
 - [ ] Gmail OAuth integration (needs GMAIL_CLIENT_ID)
@@ -84,5 +96,8 @@
 - [x] LLM integration for AI features
 - [x] AI router with intelligence procedures
 - [x] Email router with sequence management
+- [x] Notifications router with real-time support
+- [x] WebSocket server with Socket.IO
 - [x] Command palette for quick navigation
 - [x] Mobile-responsive design system
+- [x] Real-time notification system

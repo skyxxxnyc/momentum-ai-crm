@@ -5,6 +5,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { aiRouter } from "./routers/ai";
 import { emailRouter } from "./routers/email";
+import { notificationsRouter } from "./routers/notifications";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -13,6 +14,7 @@ export const appRouter = router({
   system: systemRouter,
   ai: aiRouter,
   email: emailRouter,
+  notifications: notificationsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -627,17 +629,6 @@ export const appRouter = router({
       }),
   }),
 
-  notifications: router({
-    list: protectedProcedure.query(async ({ ctx }) => {
-      return db.getNotifications(ctx.user.id);
-    }),
-    
-    markAsRead: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
-        return db.markNotificationAsRead(input.id);
-      }),
-  }),
 
   dashboard: router({
     stats: protectedProcedure.query(async ({ ctx }) => {

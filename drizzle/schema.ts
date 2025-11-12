@@ -224,6 +224,7 @@ export const goals = mysqlTable("goals", {
 export type Goal = typeof goals.$inferSelect;
 export type InsertGoal = typeof goals.$inferInsert;
 
+
 /**
  * Activities table - interactions and events
  */
