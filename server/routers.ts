@@ -7,6 +7,7 @@ import { aiRouter } from "./routers/ai";
 import { emailRouter } from "./routers/email";
 import { notificationsRouter } from "./routers/notifications";
 import { calendarRouter } from "./routers/calendar";
+import { prospectingRouter } from "./routers/prospecting";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -17,6 +18,7 @@ export const appRouter = router({
   email: emailRouter,
   notifications: notificationsRouter,
   calendar: calendarRouter,
+  prospecting: prospectingRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

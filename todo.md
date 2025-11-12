@@ -97,9 +97,33 @@
 - [x] Calendar page with event list
 - [x] Delete calendar events
 
+## AI Prospecting Agent
+- [x] Review lead generation knowledge base documents
+- [x] ICP-based prospecting system design
+- [x] Google Maps API integration for business discovery
+- [x] Company website scraping engine with Cheerio
+- [x] AI pain point analysis using lead gen guides
+- [x] Sales opportunity identification with LLM
+- [x] Personalized outreach recommendations
+- [x] Detailed company profile generation
+- [x] Geoeconomic data enrichment
+- [x] "Why they're a good fit" analysis
+- [x] Specific talking points generation
+- [x] Digital presence scoring (website, SEO, social media)
+- [x] Automation opportunity detection
+- [x] Recommended service package matching
+- [x] Deal value estimation
+- [x] Priority scoring (high/medium/low)
+- [x] Prospecting agent backend with tRPC router
+- [x] Prospecting agent UI with results dashboard
+- [x] Batch prospecting from ICPs
+- [x] Auto-create company pages in CRM from prospects
+- [x] Lead generation knowledge base integration
+
 ## Integrations (Ready for Configuration)
 - [x] Resend integration (needs RESEND_API_KEY)
 - [x] Google Calendar integration (needs GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN)
+- [x] Google Maps API integration (automatic via Manus proxy)
 - [ ] Gmail OAuth integration (needs GMAIL_CLIENT_ID)
 - [ ] Notion integration
 
@@ -112,8 +136,21 @@
 - [x] Email router with sequence management
 - [x] Notifications router with real-time support
 - [x] Calendar router with Google Calendar API
+- [x] Prospecting router with Google Maps integration
 - [x] WebSocket server with Socket.IO
 - [x] Command palette for quick navigation
 - [x] Mobile-responsive design system
 - [x] Real-time notification system
 - [x] Calendar integration system
+- [x] AI prospecting engine with website scraping
+
+## Future Enhancements (Optional)
+- [ ] Network Mapping visualization (who referred whom)
+- [ ] Admin Blog Editor
+- [ ] Advanced analytics dashboard with charts
+- [ ] Bulk operations for contacts/deals/leads
+- [ ] File attachments for deals and companies
+- [ ] Advanced filtering and search
+- [ ] Export functionality (CSV, PDF reports)
+- [ ] Integration with Notion
+- [ ] Direct Gmail OAuth integration

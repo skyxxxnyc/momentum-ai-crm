@@ -23,7 +23,8 @@ import AIInsights from "./pages/AIInsights";
 import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
-import Calendar from "./pages/Calendar";
+import Calendar from "@/pages/Calendar";
+import ProspectingAgent from "@/pages/ProspectingAgent";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/team" component={Team} />
       <Route path="/calendar" component={Calendar} />
+      <Route path="/prospecting" component={ProspectingAgent} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

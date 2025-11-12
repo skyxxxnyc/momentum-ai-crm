@@ -61,6 +61,7 @@ const menuItems = [
   { icon: FileText, label: "ICPs", path: "/icps" },
   { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
   { icon: CalendarClock, label: "Calendar", path: "/calendar" },
+  { icon: Sparkles, label: "Prospecting", path: "/prospecting" },
   { icon: BookOpen, label: "Articles", path: "/articles" },
   { icon: Users, label: "Team", path: "/team" },
 ];
