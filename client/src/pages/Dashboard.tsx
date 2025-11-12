@@ -23,14 +23,14 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome to Momentum AI</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Welcome to Momentum AI</p>
         </div>
-        <Link href="/ai-chat"><Button className="gap-2"><Zap className="h-4 w-4" />AI Assistant</Button></Link>
+        <Link href="/ai-chat"><Button className="gap-2 w-full sm:w-auto btn-brutal"><Zap className="h-4 w-4" />AI Assistant</Button></Link>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {kpiCards.map((kpi) => (
           <Card key={kpi.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

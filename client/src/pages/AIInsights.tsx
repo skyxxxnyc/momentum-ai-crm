@@ -22,7 +22,7 @@ export default function AIInsights() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-12 w-64" />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
           <Skeleton className="h-96" />
           <Skeleton className="h-96" />
         </div>
@@ -36,11 +36,11 @@ export default function AIInsights() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
             <Zap className="h-8 w-8 text-primary" />
             AI Insights
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Predictive intelligence and autonomous recommendations
           </p>
         </div>
@@ -54,7 +54,7 @@ export default function AIInsights() {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Revenue Forecast */}
         <Card className="card-brutal">
           <CardHeader>
@@ -137,7 +137,7 @@ export default function AIInsights() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h4 className="font-semibold">{deal.title}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-sm sm:text-base text-muted-foreground mt-1">
                             No activity for {deal.daysSinceUpdate} days
                           </p>
                         </div>
@@ -164,7 +164,7 @@ export default function AIInsights() {
                 <div className="text-center py-8">
                   <div className="text-4xl mb-2">✅</div>
                   <p className="text-muted-foreground">All deals are active!</p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-sm sm:text-base text-muted-foreground mt-1">
                     No deals require immediate attention
                   </p>
                 </div>
@@ -180,7 +180,7 @@ export default function AIInsights() {
           <CardTitle>AI-Powered Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             <Button
               variant="outline"
               className="h-auto py-4 flex-col gap-2"

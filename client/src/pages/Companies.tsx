@@ -61,7 +61,7 @@ export default function Companies() {
           {!companies || companies.length === 0 ? (
             <div className="text-center py-12"><Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" /><p className="text-muted-foreground mb-4">No companies yet</p><Button onClick={() => setOpen(true)}>Add First Company</Button></div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto"><Table>
               <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Industry</TableHead><TableHead>Website</TableHead><TableHead>Relationship</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
               <TableBody>
                 {companies.map((company) => (
@@ -74,7 +74,7 @@ export default function Companies() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

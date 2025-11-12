@@ -52,7 +52,7 @@ export default function Deals() {
           {!deals || deals.length === 0 ? (
             <div className="text-center py-12"><Target className="h-12 w-12 mx-auto text-muted-foreground mb-4" /><p className="text-muted-foreground mb-4">No deals yet</p><Button onClick={() => setOpen(true)}>Create First Deal</Button></div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto"><Table>
               <TableHeader><TableRow><TableHead>Title</TableHead><TableHead>Value</TableHead><TableHead>Stage</TableHead><TableHead>Probability</TableHead><TableHead>Momentum</TableHead><TableHead>Health</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
               <TableBody>
                 {deals.map((deal) => (
@@ -67,7 +67,7 @@ export default function Deals() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

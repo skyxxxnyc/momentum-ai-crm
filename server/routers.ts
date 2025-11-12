@@ -4,6 +4,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { aiRouter } from "./routers/ai";
+import { emailRouter } from "./routers/email";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -11,6 +12,7 @@ import { TRPCError } from "@trpc/server";
 export const appRouter = router({
   system: systemRouter,
   ai: aiRouter,
+  email: emailRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

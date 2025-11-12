@@ -21,15 +21,46 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
+import { LogOut, PanelLeft } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
+import { 
+  LayoutDashboard, 
+  Users, 
+  Building2, 
+  Target, 
+  Zap, 
+  Mail, 
+  FileText, 
+  CheckSquare, 
+  TrendingUp, 
+  Activity, 
+  BookOpen, 
+  UserPlus, 
+  Sparkles, 
+  FileCode 
+} from "lucide-react";
+
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: Users, label: "Contacts", path: "/contacts" },
+  { icon: Building2, label: "Companies", path: "/companies" },
+  { icon: Target, label: "Deals", path: "/deals" },
+  { icon: Target, label: "Kanban", path: "/deals/kanban" },
+  { icon: UserPlus, label: "Leads", path: "/leads" },
+  { icon: CheckSquare, label: "Tasks", path: "/tasks" },
+  { icon: TrendingUp, label: "Goals", path: "/goals" },
+  { icon: Activity, label: "Activities", path: "/activities" },
+  { icon: Zap, label: "AI Chat", path: "/ai-chat" },
+  { icon: Sparkles, label: "AI Insights", path: "/ai-insights" },
+  { icon: FileCode, label: "Collateral", path: "/collateral" },
+  { icon: FileText, label: "ICPs", path: "/icps" },
+  { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
+  { icon: BookOpen, label: "Articles", path: "/articles" },
+  { icon: Users, label: "Team", path: "/team" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

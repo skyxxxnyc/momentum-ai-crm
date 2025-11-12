@@ -220,7 +220,7 @@ export default function Contacts() {
               <Button onClick={() => setOpen(true)}>Add Your First Contact</Button>
             </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -288,7 +288,7 @@ export default function Contacts() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

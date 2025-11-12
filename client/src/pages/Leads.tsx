@@ -51,7 +51,7 @@ export default function Leads() {
       <Card>
         <CardHeader><CardTitle>All Leads</CardTitle></CardHeader>
         <CardContent>
-          <Table>
+          <div className="overflow-x-auto"><Table>
             <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Company</TableHead><TableHead>Status</TableHead><TableHead>Score</TableHead></TableRow></TableHeader>
             <TableBody>
               {leads?.map(lead => (
@@ -64,7 +64,7 @@ export default function Leads() {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </Table></div>
         </CardContent>
       </Card>
     </div>
