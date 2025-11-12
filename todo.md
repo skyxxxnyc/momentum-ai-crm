@@ -216,3 +216,26 @@
 - [ ] Email tracking and engagement metrics
 - [ ] SMS integration
 - [ ] Zapier/Make.com integration
+
+
+## Public Blog Routes
+- [x] Create public blog list page at /blog
+- [x] Create public blog post page at /blog/:slug
+- [x] Add SEO meta tags (title, description, OG tags)
+- [x] Add social sharing buttons (Twitter, LinkedIn, Facebook)
+- [x] Add category filtering
+- [x] Add search functionality
+- [x] Mobile-responsive blog layout
+- [ ] Add blog post navigation (previous/next)
+- [ ] Add RSS feed generation
+
+## File Attachments
+- [x] Add attachments table to database schema
+- [x] Create file upload API with S3 integration
+- [x] Add file attachment UI to deal detail pages
+- [x] Add file attachment UI to company detail pages
+- [x] Support multiple file types (PDF, DOCX, images)
+- [x] Add file preview/download functionality
+- [x] Add file deletion with S3 cleanup
+- [x] Display file metadata (name, size, upload date)
+- [x] Create DealDetail and CompanyDetail pages

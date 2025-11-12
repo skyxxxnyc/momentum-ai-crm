@@ -28,6 +28,10 @@ import ProspectingAgent from "@/pages/ProspectingAgent";
 import ProspectingScheduler from "@/pages/ProspectingScheduler";
 import BlogEditor from "@/pages/BlogEditor";
 import NotionIntegration from "@/pages/NotionIntegration";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/BlogPost";
+import DealDetail from "@/pages/DealDetail";
+import CompanyDetail from "@/pages/CompanyDetail";
 
 function Router() {
   return (
@@ -53,6 +57,10 @@ function Router() {
       <Route path="/prospecting-scheduler" component={ProspectingScheduler} />
       <Route path="/blog-editor" component={BlogEditor} />
       <Route path="/notion" component={NotionIntegration} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/deals/:id" component={DealDetail} />
+      <Route path="/companies/:id" component={CompanyDetail} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

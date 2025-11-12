@@ -11,6 +11,7 @@ import { prospectingRouter } from "./routers/prospecting";
 import { schedulerRouter } from "./routers/scheduler";
 import { blogRouter } from "./routers/blog";
 import { notionRouter } from "./routers/notion";
+import { attachmentsRouter } from "./routers/attachments";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -25,6 +26,7 @@ export const appRouter = router({
   scheduler: schedulerRouter,
   blog: blogRouter,
   notion: notionRouter,
+  attachments: attachmentsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

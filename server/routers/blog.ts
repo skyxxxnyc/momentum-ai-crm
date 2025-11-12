@@ -13,7 +13,7 @@ function generateSlug(title: string): string {
 }
 
 export const blogRouter = router({
-  // Public: List published posts
+  // Public: List all published blog posts
   listPublished: publicProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
@@ -27,25 +27,20 @@ export const blogRouter = router({
     return posts;
   }),
 
-  // Public: Get single published post by slug
+  // Public: Get a single blog post by slug
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return null;
 
-      const results = await db
+      const result = await db
         .select()
         .from(blogPosts)
-        .where(eq(blogPosts.slug, input.slug))
+        .where(and(eq(blogPosts.slug, input.slug), eq(blogPosts.status, "published")))
         .limit(1);
 
-      const post = results[0];
-      if (!post || post.status !== "published") {
-        return null;
-      }
-
-      return post;
+      return result.length > 0 ? result[0] : null;
     }),
 
   // Admin: List all posts (including drafts)
