@@ -3,13 +3,22 @@ import { protectedProcedure, router } from "../_core/trpc";
 import * as prospecting from "../prospecting";
 import * as db from "../db";
 import { readFileSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Load client one-pager content
-const CLIENT_ONE_PAGER = readFileSync(
-  join(__dirname, "../lead-gen-knowledge.md"),
-  "utf-8"
-);
+let CLIENT_ONE_PAGER = "";
+try {
+  CLIENT_ONE_PAGER = readFileSync(
+    join(__dirname, "../lead-gen-knowledge.md"),
+    "utf-8"
+  );
+} catch (error) {
+  console.warn("[Prospecting] Could not load lead-gen-knowledge.md, using empty string");
+}
 
 export const prospectingRouter = router({
   // Run prospecting agent for an ICP
