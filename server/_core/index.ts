@@ -61,8 +61,16 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  server.listen(port, () => {
+  server.listen(port, async () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Initialize prospecting scheduler
+    try {
+      const { initializeScheduler } = await import("../scheduler");
+      await initializeScheduler();
+    } catch (err) {
+      console.error("[Server] Failed to initialize scheduler:", err);
+    }
   });
 }
 

@@ -388,6 +388,58 @@ export const notifications = mysqlTable("notifications", {
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
 
+/**
+ * Prospecting schedules table - automated prospecting runs
+ */
+export const prospectingSchedules = mysqlTable("prospectingSchedules", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  icpId: int("icpId").notNull(),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly"]).notNull(),
+  maxResults: int("maxResults").default(10).notNull(),
+  autoCreateCompanies: int("autoCreateCompanies").default(1).notNull(), // 1 = true, 0 = false
+  isActive: int("isActive").default(1).notNull(), // 1 = true, 0 = false
+  lastRunAt: timestamp("lastRunAt"),
+  nextRunAt: timestamp("nextRunAt"),
+  ownerId: int("ownerId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  icpIdx: index("icp_idx").on(table.icpId),
+  ownerIdx: index("owner_idx").on(table.ownerId),
+}));
+
+export type ProspectingSchedule = typeof prospectingSchedules.$inferSelect;
+export type InsertProspectingSchedule = typeof prospectingSchedules.$inferInsert;
+
+/**
+ * Blog posts table - admin blog content
+ */
+export const blogPosts = mysqlTable("blogPosts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 500 }).notNull(),
+  slug: varchar("slug", { length: 500 }).notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  featuredImage: varchar("featuredImage", { length: 500 }),
+  status: mysqlEnum("status", ["draft", "published"]).default("draft").notNull(),
+  category: varchar("category", { length: 255 }),
+  tags: text("tags"), // JSON array of tags
+  seoTitle: varchar("seoTitle", { length: 500 }),
+  seoDescription: text("seoDescription"),
+  authorId: int("authorId").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  slugIdx: index("slug_idx").on(table.slug),
+  authorIdx: index("author_idx").on(table.authorId),
+  statusIdx: index("status_idx").on(table.status),
+}));
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   companies: many(companies),

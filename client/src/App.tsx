@@ -25,6 +25,9 @@ import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
 import Calendar from "@/pages/Calendar";
 import ProspectingAgent from "@/pages/ProspectingAgent";
+import ProspectingScheduler from "@/pages/ProspectingScheduler";
+import BlogEditor from "@/pages/BlogEditor";
+import NotionIntegration from "@/pages/NotionIntegration";
 
 function Router() {
   return (
@@ -47,6 +50,9 @@ function Router() {
       <Route path="/team" component={Team} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/prospecting" component={ProspectingAgent} />
+      <Route path="/prospecting-scheduler" component={ProspectingScheduler} />
+      <Route path="/blog-editor" component={BlogEditor} />
+      <Route path="/notion" component={NotionIntegration} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

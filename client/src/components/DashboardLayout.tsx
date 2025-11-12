@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LogOut, PanelLeft, CalendarClock } from "lucide-react";
+import { LogOut, PanelLeft, CalendarClock, Clock, PenSquare, Database } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -62,7 +62,10 @@ const menuItems = [
   { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
   { icon: CalendarClock, label: "Calendar", path: "/calendar" },
   { icon: Sparkles, label: "Prospecting", path: "/prospecting" },
+  { icon: Clock, label: "Scheduler", path: "/prospecting-scheduler" },
   { icon: BookOpen, label: "Articles", path: "/articles" },
+  { icon: PenSquare, label: "Blog Editor", path: "/blog-editor" },
+  { icon: Database, label: "Notion", path: "/notion" },
   { icon: Users, label: "Team", path: "/team" },
 ];
 
