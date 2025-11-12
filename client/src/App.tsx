@@ -23,6 +23,7 @@ import AIInsights from "./pages/AIInsights";
 import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
+import Calendar from "./pages/Calendar";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/collateral" component={CollateralGenerator} />
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/team" component={Team} />
+      <Route path="/calendar" component={Calendar} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

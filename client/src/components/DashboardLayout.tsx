@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LogOut, PanelLeft } from "lucide-react";
+import { LogOut, PanelLeft, CalendarClock } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -60,6 +60,7 @@ const menuItems = [
   { icon: FileCode, label: "Collateral", path: "/collateral" },
   { icon: FileText, label: "ICPs", path: "/icps" },
   { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
+  { icon: CalendarClock, label: "Calendar", path: "/calendar" },
   { icon: BookOpen, label: "Articles", path: "/articles" },
   { icon: Users, label: "Team", path: "/team" },
 ];

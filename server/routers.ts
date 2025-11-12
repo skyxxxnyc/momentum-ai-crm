@@ -6,6 +6,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { aiRouter } from "./routers/ai";
 import { emailRouter } from "./routers/email";
 import { notificationsRouter } from "./routers/notifications";
+import { calendarRouter } from "./routers/calendar";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -15,6 +16,7 @@ export const appRouter = router({
   ai: aiRouter,
   email: emailRouter,
   notifications: notificationsRouter,
+  calendar: calendarRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
