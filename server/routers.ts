@@ -3,12 +3,14 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { aiRouter } from "./routers/ai";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
   system: systemRouter,
+  ai: aiRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -641,107 +643,6 @@ export const appRouter = router({
     }),
   }),
 
-  ai: router({
-    scrapeWebsite: protectedProcedure
-      .input(z.object({ url: z.string() }))
-      .mutation(async ({ input }) => {
-        const response = await invokeLLM({
-          messages: [
-            {
-              role: "system",
-              content: "You are a web scraping assistant. Summarize the company's business, products, and key information from their website.",
-            },
-            {
-              role: "user",
-              content: `Analyze this company website: ${input.url}. Provide a concise summary of their business, products/services, target market, and any notable information.`,
-            },
-          ],
-        });
-
-        return { summary: response.choices[0].message.content || "" };
-      }),
-    
-    generateCollateral: protectedProcedure
-      .input(z.object({
-        type: z.enum(["proposal", "battle_card", "one_pager"]),
-        context: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        const prompts = {
-          proposal: "Generate a professional sales proposal based on the following context:",
-          battle_card: "Create a competitive battle card with key differentiators based on:",
-          one_pager: "Create a one-page sales summary based on:",
-        };
-
-        const response = await invokeLLM({
-          messages: [
-            {
-              role: "system",
-              content: "You are an expert sales content creator. Generate professional, persuasive sales collateral.",
-            },
-            {
-              role: "user",
-              content: `${prompts[input.type]} ${input.context}`,
-            },
-          ],
-        });
-
-        return { content: response.choices[0].message.content || "" };
-      }),
-    
-    scoreLead: protectedProcedure
-      .input(z.object({
-        leadData: z.object({
-          company: z.string().optional(),
-          title: z.string().optional(),
-          industry: z.string().optional(),
-          notes: z.string().optional(),
-        }),
-      }))
-      .mutation(async ({ input }) => {
-        const response = await invokeLLM({
-          messages: [
-            {
-              role: "system",
-              content: "You are a lead scoring AI. Analyze the lead and provide a score from 0-100 based on fit and engagement signals.",
-            },
-            {
-              role: "user",
-              content: `Score this lead: ${JSON.stringify(input.leadData)}. Return only a number between 0-100.`,
-            },
-          ],
-        });
-
-        const rawScore = response.choices[0].message.content;
-        const scoreText = typeof rawScore === 'string' ? rawScore : "50";
-        const score = parseInt(scoreText.match(/\d+/)?.[0] || "50");
-        
-        return { score: Math.min(100, Math.max(0, score)) };
-      }),
-    
-    calculateMomentumScore: protectedProcedure
-      .input(z.object({
-        dealId: z.number(),
-      }))
-      .mutation(async ({ input }) => {
-        const deal = await db.getDealById(input.dealId);
-        if (!deal) throw new TRPCError({ code: "NOT_FOUND", message: "Deal not found" });
-
-        const activities = await db.getActivitiesByDeal(input.dealId);
-        const recentActivityCount = activities.filter(a => {
-          const daysSince = (Date.now() - new Date(a.activityDate).getTime()) / (1000 * 60 * 60 * 24);
-          return daysSince <= 7;
-        }).length;
-
-        let score = deal.probability || 0;
-        score += recentActivityCount * 5;
-        score = Math.min(100, score);
-
-        await db.updateDeal(input.dealId, { momentumScore: score });
-
-        return { score };
-      }),
-  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CommandPalette } from "./components/CommandPalette";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
@@ -17,6 +18,8 @@ import Goals from "./pages/Goals";
 import Activities from "./pages/Activities";
 import Articles from "./pages/Articles";
 import AIChat from "./pages/AIChat";
+import AIInsights from "./pages/AIInsights";
+import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
 
@@ -35,6 +38,8 @@ function Router() {
       <Route path="/activities" component={Activities} />
       <Route path="/articles" component={Articles} />
       <Route path="/ai-chat" component={AIChat} />
+      <Route path="/ai-insights" component={AIInsights} />
+      <Route path="/collateral" component={CollateralGenerator} />
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/team" component={Team} />
       <Route path="/404" component={NotFound} />
@@ -49,6 +54,7 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
+          <CommandPalette />
           <DashboardLayout>
             <Router />
           </DashboardLayout>
