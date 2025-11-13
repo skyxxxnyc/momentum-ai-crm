@@ -553,3 +553,10 @@
 
 ## Bug Fixes
 - [x] Fix infinite re-render error in CompanyDetail component
+
+## Landing Page Redesign
+- [x] Apply neobrutalist design style (bold colors, thick borders, shadows)
+- [x] Update hero section with neobrutalist aesthetic
+- [x] Redesign feature cards with geometric shapes and bold styling
+- [x] Update pricing section with neobrutalist card design
+- [x] Ensure landing page is accessible without authentication
