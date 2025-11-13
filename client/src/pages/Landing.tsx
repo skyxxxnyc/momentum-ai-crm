@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import {
   Zap,
   Target,
@@ -16,9 +19,44 @@ import {
   Calendar,
   MessageSquare,
   Star,
+  Loader2,
 } from "lucide-react";
 
 export default function Landing() {
+  const { user, isAuthenticated } = useAuth();
+  const createCheckoutSession = trpc.stripe.createCheckoutSession.useMutation({
+    onSuccess: (data) => {
+      // Redirect to Stripe checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error) => {
+      toast.error("Failed to start checkout", {
+        description: error.message,
+      });
+    },
+  });
+
+  const handlePricingCTA = (planId: string) => {
+    if (!isAuthenticated) {
+      // Redirect to login if not authenticated
+      window.location.href = getLoginUrl();
+      return;
+    }
+
+    if (planId === "enterprise") {
+      // For enterprise, redirect to contact form or email
+      toast.info("Contact us for enterprise pricing", {
+        description: "We'll reach out to discuss your custom needs.",
+      });
+      return;
+    }
+
+    // Create checkout session for authenticated users
+    createCheckoutSession.mutate({ planId });
+  };
+
   const features = [
     {
       icon: Target,
@@ -60,6 +98,7 @@ export default function Landing() {
 
   const pricing = [
     {
+      id: "starter",
       name: "Starter",
       price: "$29",
       period: "/month",
@@ -75,6 +114,7 @@ export default function Landing() {
       popular: false,
     },
     {
+      id: "professional",
       name: "Professional",
       price: "$99",
       period: "/month",
@@ -91,6 +131,7 @@ export default function Landing() {
       popular: true,
     },
     {
+      id: "enterprise",
       name: "Enterprise",
       price: "Custom",
       period: "",
@@ -284,11 +325,17 @@ export default function Landing() {
                       ? "bg-black text-white hover:bg-gray-800"
                       : "bg-black text-white hover:bg-gray-800"
                   } border-4 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all font-black text-lg py-6`}
-                  asChild
+                  onClick={() => handlePricingCTA(plan.id)}
+                  disabled={createCheckoutSession.isPending}
                 >
-                  <a href={getLoginUrl()}>
-                    {plan.price === "Custom" ? "CONTACT SALES" : "GET STARTED"}
-                  </a>
+                  {createCheckoutSession.isPending ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      LOADING...
+                    </>
+                  ) : (
+                    <>{plan.price === "Custom" ? "CONTACT SALES" : "GET STARTED"}</>
+                  )}
                 </Button>
               </div>
             ))}

@@ -568,7 +568,7 @@
 ## Stripe Checkout Flow
 - [x] Create Stripe products and prices configuration
 - [x] Build checkout session creation tRPC endpoint
-- [ ] Wire pricing CTAs on landing page to checkout
+- [x] Wire pricing CTAs on landing page to checkout
 - [x] Implement webhook handler for subscription events
 - [x] Handle checkout.session.completed event
 - [x] Handle customer.subscription.updated event
