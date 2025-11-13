@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Users, Building2, DollarSign, Target, Activity, Zap, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { RecentlyViewed } from "@/components/RecentlyViewed";
 
 export default function Dashboard() {
   const { data: stats, isLoading } = trpc.dashboard.stats.useQuery();
@@ -40,6 +41,15 @@ export default function Dashboard() {
             <CardContent><div className="text-2xl font-bold">{kpi.value}</div></CardContent>
           </Card>
         ))}
+      </div>
+      
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {/* Future: Add charts or activity feed here */}
+        </div>
+        <div>
+          <RecentlyViewed />
+        </div>
       </div>
     </div>
   );

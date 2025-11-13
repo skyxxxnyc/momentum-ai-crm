@@ -25,6 +25,7 @@ import {
 import { Link, useParams } from "wouter";
 import { FileAttachments } from "@/components/FileAttachments";
 import { toast } from "sonner";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function CompanyDetail() {
   const params = useParams();
@@ -41,6 +42,17 @@ export default function CompanyDetail() {
   const { data: contacts } = trpc.contacts.list.useQuery();
   const { data: deals } = trpc.deals.list.useQuery();
   const { data: activities } = trpc.activities.list.useQuery();
+  const { addItem } = useRecentlyViewed();
+
+  // Track recently viewed
+  if (company) {
+    addItem({
+      id: company.id,
+      type: "company",
+      name: company.name || "Unnamed Company",
+      path: `/companies/${company.id}`,
+    });
+  }
 
   const updateMutation = trpc.companies.update.useMutation({
     onSuccess: () => {

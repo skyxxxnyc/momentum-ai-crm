@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, User, Mail, Phone, Building2, Briefcase, Calendar } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { FileAttachments } from "@/components/FileAttachments";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function ContactDetail() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function ContactDetail() {
   const { data: companies } = trpc.companies.list.useQuery();
   const { data: deals } = trpc.deals.list.useQuery();
   const { data: activities } = trpc.activities.list.useQuery();
+  const { addItem } = useRecentlyViewed();
 
   if (isLoading) {
     return (
@@ -25,6 +27,16 @@ export default function ContactDetail() {
         <div className="text-center py-12 text-muted-foreground">Loading contact...</div>
       </div>
     );
+  }
+
+  // Track recently viewed
+  if (contact) {
+    addItem({
+      id: contact.id,
+      type: "contact",
+      name: contact.name || "Unnamed Contact",
+      path: `/contacts/${contact.id}`,
+    });
   }
 
   if (!contact) {

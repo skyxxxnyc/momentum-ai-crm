@@ -334,3 +334,45 @@
 - [x] Create "Settings" section (Knowledge Hub, Notion Sync, Team)
 - [x] Reduce total visible items in sidebar
 - [x] Add expand/collapse functionality for groups
+
+
+## Branding Update
+- [ ] Change app title from "Momentum AI" to "siaCRM"
+- [ ] Update logo/branding with "sia" in lighter weight, "CRM" in bold
+- [ ] Update all references in code and UI
+
+## Sidebar Search
+- [ ] Add search input at top of sidebar
+- [ ] Implement fuzzy search across all menu items
+- [ ] Show filtered results as user types
+- [ ] Highlight matching items and auto-expand groups
+- [ ] Add keyboard navigation (arrow keys, Enter to navigate)
+
+## Onboarding Tour
+- [ ] Create tour system with step-by-step walkthrough
+- [ ] Add tour steps for key features (ICPs, Prospecting, AI Chat, Deals)
+- [ ] Build tour UI with tooltips and highlights
+- [ ] Add "Skip Tour" and "Next" buttons
+- [ ] Store tour completion status in user preferences
+- [ ] Add "Restart Tour" option in settings
+
+## Recent Items Widget
+- [ ] Track recently viewed contacts, companies, and deals
+- [ ] Store recent items in localStorage or database
+- [ ] Add "Recent" section to sidebar or dashboard
+- [ ] Show last 5 accessed items with icons and timestamps
+- [ ] Add quick navigation to recent items
+- [ ] Clear recent items functionality
+
+## Branding & UX Improvements
+- [x] Rebrand from "Momentum AI" to "siaCRM" with styled font weights
+- [x] Add sidebar search for quick page filtering
+- [x] Create onboarding tour for new users with react-joyride
+- [x] Add Recently Viewed widget for quick navigation to recent contacts/companies/deals
+- [x] Track recently viewed items in ContactDetail, CompanyDetail, and DealDetail pages
+- [x] Display Recently Viewed widget on Dashboard
+
+## Consolidated Navigation
+- [x] Consolidate sidebar from 21 items to 6 collapsible groups
+- [x] Implement expand/collapse functionality for navigation groups
+- [x] Group items by category (Overview, CRM, Productivity, AI Tools, Marketing, Settings)

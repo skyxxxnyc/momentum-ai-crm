@@ -35,6 +35,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
+import { OnboardingTour } from "./OnboardingTour";
 
 import { 
   LayoutDashboard, 
@@ -130,6 +131,7 @@ export default function DashboardLayout({
   });
   const { loading, user } = useAuth();
   const [openGroups, setOpenGroups] = useState<string[]>(["Overview", "CRM", "AI Tools"]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -165,8 +167,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+    <>
+      <OnboardingTour />
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
         <Sidebar
           style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
           className="border-r border-border"
@@ -174,13 +178,35 @@ export default function DashboardLayout({
           <SidebarHeader className="border-b border-border p-4">
             <div className="flex items-center gap-3">
               <img src={APP_LOGO} alt={APP_TITLE} className="h-8 w-8" />
-              <span className="font-bold text-lg">{APP_TITLE}</span>
+              <span className="text-lg">
+                <span className="font-light">sia</span>
+                <span className="font-bold">CRM</span>
+              </span>
             </div>
           </SidebarHeader>
 
           <SidebarContent>
+            <div className="px-3 py-2">
+              <input
+                type="text"
+                placeholder="Search pages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
             <SidebarMenu>
-              {menuGroups.map((group) => (
+              {menuGroups
+                .map((group) => ({
+                  ...group,
+                  items: group.items.filter((item) =>
+                    searchQuery
+                      ? item.label.toLowerCase().includes(searchQuery.toLowerCase())
+                      : true
+                  ),
+                }))
+                .filter((group) => group.items.length > 0)
+                .map((group) => (
                 <Collapsible
                   key={group.label}
                   open={openGroups.includes(group.label)}
@@ -256,7 +282,8 @@ export default function DashboardLayout({
           </header>
           <main className="flex-1 p-6">{children}</main>
         </SidebarInset>
-      </div>
-    </SidebarProvider>
+        </div>
+      </SidebarProvider>
+    </>
   );
 }

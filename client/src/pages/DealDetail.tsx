@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, DollarSign, TrendingUp, Calendar, User, Building2 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import { FileAttachments } from "@/components/FileAttachments";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function DealDetail() {
   const params = useParams();
@@ -15,12 +16,24 @@ export default function DealDetail() {
     select: (deals) => deals.find((d: any) => d.id === dealId),
   });
 
+  const { addItem } = useRecentlyViewed();
+
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="text-center py-12 text-muted-foreground">Loading deal...</div>
       </div>
     );
+  }
+
+  // Track recently viewed
+  if (deal) {
+    addItem({
+      id: deal.id,
+      type: "deal",
+      name: deal.title || "Unnamed Deal",
+      path: `/deals/${deal.id}`,
+    });
   }
 
   if (!deal) {
