@@ -512,3 +512,41 @@
 - [x] Track template usage count
 - [x] Add template categories/tags
 - [ ] Show template performance metrics
+
+## Marketing Landing Page
+- [x] Design hero section with value proposition
+- [x] Add features section highlighting key capabilities
+- [x] Create pricing section with subscription tiers
+- [x] Add testimonials/social proof section
+- [x] Build CTA buttons linking to signup/login
+- [x] Add footer with links and company info
+- [x] Make landing page the default route (/)
+- [x] Ensure responsive design for mobile
+
+## Stripe Payment Integration
+- [ ] Add Stripe feature to project using webdev_add_feature
+- [ ] Create subscription plans (Starter, Professional, Enterprise)
+- [ ] Build pricing page with plan comparison
+- [ ] Implement checkout flow with Stripe
+- [ ] Add subscription management in user settings
+- [ ] Handle webhook events for subscription updates
+- [ ] Show current plan and billing info in dashboard
+- [ ] Implement upgrade/downgrade functionality
+
+## In-App Notification System
+- [ ] Create notifications database table
+- [ ] Build notifications router with CRUD operations
+- [ ] Add notification bell icon to header with unread count
+- [ ] Create notification dropdown panel
+- [ ] Implement mark as read/unread functionality
+- [ ] Add notification types (mentions, tasks, deals, activity)
+- [ ] Show real-time notification updates
+- [ ] Add notification preferences/settings
+
+## Push Notification System
+- [ ] Request browser notification permissions
+- [ ] Implement service worker for push notifications
+- [ ] Send browser notifications for important events
+- [ ] Handle notification click to navigate to relevant page
+- [ ] Add push notification toggle in settings
+- [ ] Test notifications across browsers

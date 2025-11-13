@@ -25,7 +25,8 @@ import EmailSequenceDetail from "./pages/EmailSequenceDetail";
 import SequenceTemplateLibrary from "./pages/SequenceTemplateLibrary";
 import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
-import Team from "./pages/Team";
+import Home from "./pages/Home";
+import Landing from "./pages/Landing";
 import Calendar from "@/pages/Calendar";
 import ProspectingAgent from "@/pages/ProspectingAgent";
 import ProspectingScheduler from "@/pages/ProspectingScheduler";
@@ -42,7 +43,7 @@ import ContactDetail from "@/pages/ContactDetail";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={Landing} />
       <Route path="/contacts" component={ContactsWithBulk} />
       <Route path="/companies" component={Companies} />
       <Route path="/deals" component={Deals} />
@@ -60,14 +61,14 @@ function Router() {
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/email-sequences/:id" component={EmailSequenceDetail} />
       <Route path="/sequence-templates" component={SequenceTemplateLibrary} />
-      <Route path="/team" component={Team} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/prospecting" component={ProspectingAgent} />
       <Route path="/prospecting-scheduler" component={ProspectingScheduler} />
       <Route path="/blog-editor" component={BlogEditor} />
-          <Route path="/notion" component={NotionIntegration} />
-          <Route path="/knowledge" component={KnowledgeHub} />
-          <Route path="/knowledge/admin" component={KnowledgeAdmin} />
+      <Route path="/notion" component={NotionIntegration} />
+      <Route path="/knowledge" component={KnowledgeHub} />
+      <Route path="/knowledge/admin" component={KnowledgeAdmin} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/deals/:id" component={DealDetail} />
