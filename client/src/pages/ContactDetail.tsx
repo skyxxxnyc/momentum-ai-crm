@@ -23,6 +23,8 @@ import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
+import { EditableField } from "@/components/EditableField";
+import { NotesList } from "@/components/NotesList";
 
 export default function ContactDetail() {
   const params = useParams();
@@ -40,6 +42,17 @@ export default function ContactDetail() {
   );
 
   const { addItem } = useRecentlyViewed();
+  const utils = trpc.useUtils();
+
+  const updateContact = trpc.contacts.update.useMutation({
+    onSuccess: () => {
+      utils.contacts.list.invalidate();
+      toast.success("Contact updated");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update contact");
+    },
+  });
 
   // Track recently viewed
   if (contact) {
@@ -170,6 +183,7 @@ export default function ContactDetail() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="deals">Deals ({contactDeals.length})</TabsTrigger>
           <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -180,28 +194,41 @@ export default function ContactDetail() {
                 <CardTitle>Contact Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {contact.email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {contact.email}
-                    </a>
-                  </div>
-                )}
-                {contact.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <a
-                      href={`tel:${contact.phone}`}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {contact.phone}
-                    </a>
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email</label>
+                  <EditableField
+                    value={contact.email}
+                    type="email"
+                    onSave={async (value) => {
+                      await updateContact.mutateAsync({ id: contactId, email: value });
+                    }}
+                    placeholder="email@example.com"
+                    emptyText="Add email..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phone</label>
+                  <EditableField
+                    value={contact.phone}
+                    type="tel"
+                    onSave={async (value) => {
+                      await updateContact.mutateAsync({ id: contactId, phone: value });
+                    }}
+                    placeholder="+1 (555) 123-4567"
+                    emptyText="Add phone..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Title</label>
+                  <EditableField
+                    value={contact.title}
+                    onSave={async (value) => {
+                      await updateContact.mutateAsync({ id: contactId, title: value });
+                    }}
+                    placeholder="e.g., VP of Sales"
+                    emptyText="Add title..."
+                  />
+                </div>
                 {(contact.address || contact.city || contact.state) && (
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -392,6 +419,20 @@ export default function ContactDetail() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notes" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Notes</CardTitle>
+              <CardDescription>
+                Add notes and comments about this contact
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NotesList entityType="contact" entityId={contactId} />
             </CardContent>
           </Card>
         </TabsContent>

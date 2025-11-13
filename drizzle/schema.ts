@@ -582,3 +582,29 @@ export const activityLogRelations = relations(activity_log, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+/**
+ * Notes table - comments and notes on companies, contacts, and deals
+ */
+export const notes = mysqlTable("notes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  entityType: varchar("entityType", { length: 50 }).notNull(), // "contact", "company", "deal"
+  entityId: int("entityId").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  entityIdx: index("entity_idx").on(table.entityType, table.entityId),
+  userIdx: index("user_idx").on(table.userId),
+}));
+
+export type Note = typeof notes.$inferSelect;
+export type InsertNote = typeof notes.$inferInsert;
+
+export const notesRelations = relations(notes, ({ one }) => ({
+  user: one(users, {
+    fields: [notes.userId],
+    references: [users.id],
+  }),
+}));

@@ -21,6 +21,8 @@ import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
+import { EditableField } from "@/components/EditableField";
+import { NotesList } from "@/components/NotesList";
 
 export default function DealDetail() {
   const params = useParams();
@@ -38,6 +40,17 @@ export default function DealDetail() {
   );
 
   const { addItem } = useRecentlyViewed();
+  const utils = trpc.useUtils();
+
+  const updateDeal = trpc.deals.update.useMutation({
+    onSuccess: () => {
+      utils.deals.list.invalidate();
+      toast.success("Deal updated");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update deal");
+    },
+  });
 
   // Track recently viewed
   if (deal) {
@@ -200,6 +213,7 @@ export default function DealDetail() {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -210,12 +224,43 @@ export default function DealDetail() {
                 <CardTitle>Deal Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {deal.description && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Description</p>
-                    <p className="text-sm">{deal.description}</p>
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <EditableField
+                    value={deal.description}
+                    type="textarea"
+                    onSave={async (value) => {
+                      await updateDeal.mutateAsync({ id: dealId, description: value });
+                    }}
+                    placeholder="Enter deal description"
+                    emptyText="Add description..."
+                    displayClassName="text-sm text-muted-foreground"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Deal Value</label>
+                  <EditableField
+                    value={deal.value}
+                    type="number"
+                    onSave={async (value) => {
+                      await updateDeal.mutateAsync({ id: dealId, value: parseInt(value) || 0 });
+                    }}
+                    placeholder="0"
+                    emptyText="Add value..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Probability (%)</label>
+                  <EditableField
+                    value={deal.probability}
+                    type="number"
+                    onSave={async (value) => {
+                      await updateDeal.mutateAsync({ id: dealId, probability: parseInt(value) || 0 });
+                    }}
+                    placeholder="0"
+                    emptyText="Add probability..."
+                  />
+                </div>
                 {deal.expectedCloseDate && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -355,6 +400,20 @@ export default function DealDetail() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notes" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Notes</CardTitle>
+              <CardDescription>
+                Add notes and comments about this deal
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NotesList entityType="deal" entityId={dealId} />
             </CardContent>
           </Card>
         </TabsContent>

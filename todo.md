@@ -422,3 +422,61 @@
 - [x] Fix admin role assignment for project owner
 - [x] Verify detail pages open when clicking entities
 - [x] Verify admin privileges work correctly
+
+## 1. Inline Editing on Detail Pages
+- [x] Add inline edit mode for company fields (name, industry, website, etc.)
+- [x] Add inline edit mode for contact fields (name, email, phone, title, etc.)
+- [x] Add inline edit mode for deal fields (title, value, stage, probability, etc.)
+- [x] Implement auto-save on blur or Enter key
+- [x] Show loading state during save
+- [x] Display success/error feedback
+- [x] Support ESC key to cancel editing
+
+## 2. Notes & Comments System
+- [x] Create notes database table with user, entity, timestamp
+- [x] Build NotesList component for detail pages
+- [x] Implement rich text editor for notes (markdown support)
+- [x] Add @mentions functionality for users
+- [ ] Show notes in activity timeline
+- [x] Support editing and deleting own notes
+- [x] Add notes tab to company/contact/deal detail pages
+
+## 3. Task & Reminder System
+- [x] Create tasks database table with due dates, assignments, status
+- [x] Build task creation modal with date picker
+- [x] Link tasks to companies, contacts, or deals
+- [ ] Implement task list view with filtering (all, mine, overdue)
+- [ ] Add task status updates (pending, completed, cancelled)
+- [ ] Create notification system for due tasks
+- [ ] Show upcoming tasks on Dashboard
+- [ ] Add tasks section to detail pages
+
+## 4. Bulk CSV Import
+- [ ] Create CSV upload component with drag-and-drop
+- [ ] Build field mapping interface (CSV columns → CRM fields)
+- [ ] Implement CSV parsing and validation
+- [ ] Add duplicate detection (by email for contacts, domain for companies)
+- [ ] Show import preview before committing
+- [ ] Create bulk insert procedures in backend
+- [ ] Display import results (success, skipped, errors)
+- [ ] Add import history tracking
+
+## 5. Email Integration
+- [ ] Create email_threads and email_messages tables
+- [ ] Build email tracking widget for contact detail pages
+- [ ] Implement email template system (create, edit, delete)
+- [ ] Add email sequence builder with steps and delays
+- [ ] Create email composer with template selection
+- [ ] Track email opens and clicks (if possible)
+- [ ] Link emails to contacts and deals
+- [ ] Show email history in activity timeline
+
+## 6. Advanced Pipeline Management
+- [ ] Implement drag-and-drop in Kanban view for deal stages
+- [ ] Add stage transition animations
+- [ ] Create win/loss reason capture on deal close
+- [ ] Build pipeline analytics (conversion rates, avg time per stage)
+- [ ] Add deal forecasting based on probability
+- [ ] Implement automated stage transitions based on actions
+- [ ] Create pipeline velocity metrics
+- [ ] Add filters for deal owner, date range, value range

@@ -23,6 +23,8 @@ import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
+import { EditableField } from "@/components/EditableField";
+import { NotesList } from "@/components/NotesList";
 
 export default function CompanyDetail() {
   const params = useParams();
@@ -40,6 +42,17 @@ export default function CompanyDetail() {
   );
 
   const { addItem } = useRecentlyViewed();
+  const utils = trpc.useUtils();
+
+  const updateCompany = trpc.companies.update.useMutation({
+    onSuccess: () => {
+      utils.companies.list.invalidate();
+      toast.success("Company updated");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update company");
+    },
+  });
 
   // Track recently viewed
   if (company) {
@@ -165,6 +178,7 @@ export default function CompanyDetail() {
           <TabsTrigger value="contacts">Contacts ({companyContacts.length})</TabsTrigger>
           <TabsTrigger value="deals">Deals ({companyDeals.length})</TabsTrigger>
           <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -175,25 +189,52 @@ export default function CompanyDetail() {
                 <CardTitle>Company Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {company.website && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-muted-foreground" />
-                    <a
-                      href={company.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {company.website}
-                    </a>
-                  </div>
-                )}
-                {company.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{company.phone}</span>
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Industry</label>
+                  <EditableField
+                    value={company.industry}
+                    onSave={async (value) => {
+                      await updateCompany.mutateAsync({ id: companyId, industry: value });
+                    }}
+                    placeholder="Enter industry"
+                    emptyText="Add industry..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Website</label>
+                  <EditableField
+                    value={company.website}
+                    type="url"
+                    onSave={async (value) => {
+                      await updateCompany.mutateAsync({ id: companyId, website: value });
+                    }}
+                    placeholder="https://example.com"
+                    emptyText="Add website..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phone</label>
+                  <EditableField
+                    value={company.phone}
+                    type="tel"
+                    onSave={async (value) => {
+                      await updateCompany.mutateAsync({ id: companyId, phone: value });
+                    }}
+                    placeholder="+1 (555) 123-4567"
+                    emptyText="Add phone..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Company Size</label>
+                  <EditableField
+                    value={company.size}
+                    onSave={async (value) => {
+                      await updateCompany.mutateAsync({ id: companyId, size: value });
+                    }}
+                    placeholder="e.g., 50-100 employees"
+                    emptyText="Add company size..."
+                  />
+                </div>
                 {(company.address || company.city || company.state) && (
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -210,26 +251,27 @@ export default function CompanyDetail() {
                     </div>
                   </div>
                 )}
-                {company.size && (
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{company.size}</span>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
             {/* Description */}
-            {company.description && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>About</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{company.description}</p>
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardHeader>
+                <CardTitle>About</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EditableField
+                  value={company.description}
+                  type="textarea"
+                  onSave={async (value) => {
+                    await updateCompany.mutateAsync({ id: companyId, description: value });
+                  }}
+                  placeholder="Enter company description"
+                  emptyText="Add description..."
+                  displayClassName="text-sm text-muted-foreground"
+                />
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
@@ -379,6 +421,20 @@ export default function CompanyDetail() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notes" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Notes</CardTitle>
+              <CardDescription>
+                Add notes and comments about this company
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NotesList entityType="company" entityId={companyId} />
             </CardContent>
           </Card>
         </TabsContent>

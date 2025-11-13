@@ -15,6 +15,8 @@ import { knowledgeRouter } from "./routers/knowledge";
 import { attachmentsRouter } from "./routers/attachments";
 import { bulkRouter } from "./routers/bulk";
 import { activityRouter } from "./routers/activity";
+import { notesRouter } from "./routers/notes";
+import { tasksRouter } from "./routers/tasks";
 import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
@@ -65,6 +67,8 @@ import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
   activity: activityRouter,
+  notes: notesRouter,
+  tasks: tasksRouter,
   system: systemRouter,
   ai: aiRouter,
   email: emailRouter,
