@@ -578,3 +578,9 @@
 - [ ] Add upgrade/downgrade functionality
 - [ ] Implement subscription cancellation
 - [x] Add Stripe customer portal access
+
+## Landing Page Fixes
+- [x] Change to dark theme with high contrast (dark backgrounds, light text)
+- [x] Remove all "14-day free trial" mentions
+- [x] Ensure neobrutalist style works with dark theme
+- [x] Fix text readability issues
