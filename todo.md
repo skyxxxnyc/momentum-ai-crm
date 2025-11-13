@@ -553,6 +553,7 @@
 
 ## Bug Fixes
 - [x] Fix infinite re-render error in CompanyDetail component
+- [x] Fix 404 error when starting prospecting agent from ICP page
 
 ## Landing Page Redesign
 - [x] Apply neobrutalist design style (bold colors, thick borders, shadows)

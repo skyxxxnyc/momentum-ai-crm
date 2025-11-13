@@ -250,7 +250,7 @@ export default function ICPs() {
                       <TableCell>{icp.revenue || "-"}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Link href={`/prospecting-agent?icpId=${icp.id}`}>
+                          <Link href={`/prospecting?icpId=${icp.id}`}>
                             <Button variant="ghost" size="sm" className="gap-2">
                               <Play className="h-4 w-4" />
                               Run
