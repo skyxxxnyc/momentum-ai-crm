@@ -550,3 +550,6 @@
 - [ ] Handle notification click to navigate to relevant page
 - [ ] Add push notification toggle in settings
 - [ ] Test notifications across browsers
+
+## Bug Fixes
+- [x] Fix infinite re-render error in CompanyDetail component

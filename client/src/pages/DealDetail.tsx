@@ -21,6 +21,7 @@ import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
+import { useEffect } from "react";
 import { EditableField } from "@/components/EditableField";
 import { NotesList } from "@/components/NotesList";
 
@@ -53,14 +54,16 @@ export default function DealDetail() {
   });
 
   // Track recently viewed
-  if (deal) {
-    addItem({
-      id: deal.id,
-      type: "deal",
-      name: deal.title || "Unnamed Deal",
-      path: `/deals/${deal.id}`,
-    });
-  }
+  useEffect(() => {
+    if (deal) {
+      addItem({
+        id: deal.id,
+        type: "deal",
+        name: deal.title || "Unnamed Deal",
+        path: `/deals/${deal.id}`,
+      });
+    }
+  }, [deal?.id, addItem]);
 
   // Find linked company and contact
   const company = allCompanies?.find((c: any) => c.id === deal?.companyId);

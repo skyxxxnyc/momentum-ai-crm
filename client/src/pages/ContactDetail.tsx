@@ -23,6 +23,7 @@ import { Link, useParams } from "wouter";
 import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
+import { useEffect } from "react";
 import { EditableField } from "@/components/EditableField";
 import { NotesList } from "@/components/NotesList";
 import { EmailHistory } from "@/components/EmailHistory";
@@ -56,14 +57,16 @@ export default function ContactDetail() {
   });
 
   // Track recently viewed
-  if (contact) {
-    addItem({
-      id: contact.id,
-      type: "contact",
-      name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
-      path: `/contacts/${contact.id}`,
-    });
-  }
+  useEffect(() => {
+    if (contact) {
+      addItem({
+        id: contact.id,
+        type: "contact",
+        name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+        path: `/contacts/${contact.id}`,
+      });
+    }
+  }, [contact?.id, addItem]);
 
   // Find linked company and deals
   const company = allCompanies?.find((c: any) => c.id === contact?.companyId);
