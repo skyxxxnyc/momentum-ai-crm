@@ -2,9 +2,44 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import * as prospecting from "../prospecting";
 import * as db from "../db";
+import { getDb } from "../db";
+import { knowledgeArticles } from "../../drizzle/schema";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+
+// Helper to get brand guidelines from knowledge base
+async function getBrandContext(): Promise<string> {
+  try {
+    const database = await getDb();
+    if (!database) return "";
+
+    const results = await database.select().from(knowledgeArticles);
+    const brandArticles = results.filter(
+      (a) =>
+        a.category?.toLowerCase().includes("brand") ||
+        a.category?.toLowerCase().includes("playbook") ||
+        a.tags?.toLowerCase().includes("brand")
+    );
+
+    if (brandArticles.length === 0) return "";
+
+    let context = "\n\n=== Brand Guidelines ===\n";
+    for (const article of brandArticles.slice(0, 2)) {
+      let content = article.content;
+      if (article.filePath) {
+        try {
+          content = readFileSync(join(process.cwd(), article.filePath), "utf-8");
+        } catch (e) {}
+      }
+      // Extract key sections (first 1500 chars for comprehensive context)
+      context += `\n[${article.title}]\n${content.substring(0, 1500)}...\n`;
+    }
+    return context;
+  } catch (error) {
+    return "";
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,6 +73,9 @@ export const prospectingRouter = router({
           throw new Error("ICP not found");
         }
 
+        // Get brand context from knowledge base
+        const brandContext = await getBrandContext();
+
         // Run prospecting agent
         const prospects = await prospecting.runProspectingAgent(
           {
@@ -52,7 +90,8 @@ export const prospectingRouter = router({
             targetKeywords: icp.buyingSignals || undefined,
           },
           CLIENT_ONE_PAGER,
-          input.maxResults
+          input.maxResults,
+          brandContext
         );
 
         // Optionally auto-create companies in CRM

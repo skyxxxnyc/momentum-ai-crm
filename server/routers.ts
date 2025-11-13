@@ -16,6 +16,49 @@ import { attachmentsRouter } from "./routers/attachments";
 import { bulkRouter } from "./routers/bulk";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
+import { getDb } from "./db";
+import { knowledgeArticles } from "../drizzle/schema";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// Helper function to search knowledge base
+async function getKnowledgeContext(query: string): Promise<string> {
+  try {
+    const database = await getDb();
+    if (!database) return "";
+
+    const searchLower = query.toLowerCase();
+    const results = await database.select().from(knowledgeArticles);
+
+    const scored = results
+      .map((article) => {
+        let score = 0;
+        if (article.title.toLowerCase().includes(searchLower)) score += 10;
+        if (article.content.toLowerCase().includes(searchLower)) score += 5;
+        if (article.tags && article.tags.toLowerCase().includes(searchLower)) score += 3;
+        return { ...article, score };
+      })
+      .filter((a) => a.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 2);
+
+    if (scored.length === 0) return "";
+
+    let context = "\n\n=== Knowledge Base Guidelines ===\n";
+    for (const article of scored) {
+      let content = article.content;
+      if (article.filePath) {
+        try {
+          content = readFileSync(join(process.cwd(), article.filePath), "utf-8");
+        } catch (e) {}
+      }
+      context += `\n[${article.title}]\n${content.substring(0, 800)}...\n`;
+    }
+    return context;
+  } catch (error) {
+    return "";
+  }
+}
 import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
@@ -585,11 +628,14 @@ export const appRouter = router({
 
         const history = await db.getAIChatMessages(ctx.user.id, input.sessionId);
         
+        // Get knowledge context for the user's message
+        const knowledgeContext = await getKnowledgeContext(input.content);
+
         const response = await invokeLLM({
           messages: [
             {
               role: "system",
-              content: "You are an AI assistant for Momentum AI CRM. Help users with sales, prospecting, deal management, and CRM tasks. Be concise and actionable.",
+              content: `You are an AI assistant for Momentum AI CRM. Help users with sales, prospecting, deal management, and CRM tasks. Be concise and actionable.${knowledgeContext}`,
             },
             ...history.slice(-10).map(msg => ({
               role: msg.role as "user" | "assistant",

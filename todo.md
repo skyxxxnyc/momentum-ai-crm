@@ -310,3 +310,16 @@
 - [ ] Connect AI Chat to reference knowledge hub content
 - [ ] Connect AI agents to use playbook guidance
 - [ ] Add ability to upload and manage knowledge articles
+
+
+## AI Knowledge Hub Integration
+- [x] Update AI Chat to search and reference knowledge hub
+- [x] Connect Collateral Generator to use playbook guidelines
+- [x] Connect Prospecting Agent to use brand voice and messaging
+- [x] Implement automatic context injection for AI prompts
+- [x] Build admin upload interface for knowledge articles
+- [x] Add file upload support (markdown, PDF, text)
+- [x] Add knowledge article management (edit, delete, publish)
+- [x] Create knowledge article preview and versioning
+- [x] Add brand guidelines extraction for AI context
+- [x] Implement smart context selection based on AI task type

@@ -217,13 +217,15 @@ export async function analyzeBusinessWithAI(
   prospect: ProspectingResult,
   websiteData: Awaited<ReturnType<typeof scrapeAndAnalyzeWebsite>>,
   icp: ICP,
-  clientOnePager: string
+  clientOnePager: string,
+  brandContext: string = ""
 ): Promise<Partial<ProspectingResult>> {
   try {
     const prompt = `You are an expert sales analyst for a web design and digital marketing agency. Analyze this business and provide detailed sales intelligence.
 
 **Your Agency's Services:**
 ${clientOnePager}
+${brandContext}
 
 **Target ICP:**
 - Industry: ${icp.industry}
@@ -392,7 +394,8 @@ Return your analysis as a JSON object with these exact keys:
 export async function runProspectingAgent(
   icp: ICP,
   clientOnePager: string,
-  maxResults: number = 10
+  maxResults: number = 10,
+  brandContext: string = ""
 ): Promise<ProspectingResult[]> {
   console.log(`[Prospecting Agent] Starting for ICP: ${icp.name}`);
 
@@ -432,7 +435,7 @@ export async function runProspectingAgent(
 
     // AI analysis
     try {
-      const aiAnalysis = await analyzeBusinessWithAI(prospect, websiteData, icp, clientOnePager);
+      const aiAnalysis = await analyzeBusinessWithAI(prospect, websiteData, icp, clientOnePager, brandContext);
       const enrichedProspect = { ...prospect, ...aiAnalysis };
       enrichedProspects.push(enrichedProspect);
     } catch (error) {

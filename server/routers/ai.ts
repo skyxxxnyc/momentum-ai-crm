@@ -2,6 +2,65 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import * as db from "../db";
+import { getDb } from "../db";
+import { knowledgeArticles } from "../../drizzle/schema";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// Helper function to search knowledge base and build context
+async function getKnowledgeContext(query: string, limit: number = 3): Promise<string> {
+  try {
+    const database = await getDb();
+    if (!database) return "";
+
+    const searchLower = query.toLowerCase();
+    const results = await database.select().from(knowledgeArticles);
+
+    // Score and filter relevant articles
+    const scored = results
+      .map((article) => {
+        let score = 0;
+        const titleLower = article.title.toLowerCase();
+        const contentLower = article.content.toLowerCase();
+
+        if (titleLower.includes(searchLower)) score += 10;
+        const contentMatches = (contentLower.match(new RegExp(searchLower, "g")) || []).length;
+        score += contentMatches;
+        if (article.tags && article.tags.toLowerCase().includes(searchLower)) score += 5;
+
+        return { ...article, score };
+      })
+      .filter((a) => a.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+
+    if (scored.length === 0) return "";
+
+    // Build context string with relevant excerpts
+    let context = "\n\n=== Relevant Knowledge Base Context ===\n";
+    for (const article of scored) {
+      // Try to read full content from file if available
+      let content = article.content;
+      if (article.filePath) {
+        try {
+          const fullPath = join(process.cwd(), article.filePath);
+          content = readFileSync(fullPath, "utf-8");
+        } catch (e) {
+          // Fall back to stored content
+        }
+      }
+
+      // Extract relevant excerpt (first 1000 chars)
+      const excerpt = content.substring(0, 1000);
+      context += `\n[${article.title}]\n${excerpt}...\n`;
+    }
+
+    return context;
+  } catch (error) {
+    console.error("Error fetching knowledge context:", error);
+    return "";
+  }
+}
 
 export const aiRouter = router({
   // Calculate momentum score for a deal
