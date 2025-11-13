@@ -564,3 +564,17 @@
 ## Onboarding Tour Fix
 - [x] Disable onboarding tour on landing page
 - [x] Only show onboarding tour after user logs in (on dashboard)
+
+## Stripe Checkout Flow
+- [x] Create Stripe products and prices configuration
+- [x] Build checkout session creation tRPC endpoint
+- [ ] Wire pricing CTAs on landing page to checkout
+- [x] Implement webhook handler for subscription events
+- [x] Handle checkout.session.completed event
+- [x] Handle customer.subscription.updated event
+- [x] Handle customer.subscription.deleted event
+- [ ] Create subscription management page in settings
+- [ ] Display current subscription status and plan details
+- [ ] Add upgrade/downgrade functionality
+- [ ] Implement subscription cancellation
+- [x] Add Stripe customer portal access

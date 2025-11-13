@@ -7,4 +7,5 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  frontendUrl: process.env.VITE_FRONTEND_URL || (process.env.NODE_ENV === "production" ? "https://momentumcrm-f9qujskd.manus.space" : "http://localhost:3000"),
 };
