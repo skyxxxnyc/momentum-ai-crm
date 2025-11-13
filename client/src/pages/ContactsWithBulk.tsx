@@ -173,7 +173,11 @@ export default function ContactsWithBulk() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">
-                      {contact.firstName} {contact.lastName}
+                      <Link href={`/contacts/${contact.id}`}>
+                        <span className="text-primary hover:underline cursor-pointer">
+                          {contact.firstName} {contact.lastName}
+                        </span>
+                      </Link>
                     </TableCell>
                     <TableCell>{contact.email || "-"}</TableCell>
                     <TableCell>{contact.phone || "-"}</TableCell>

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Building2, Trash2, Edit, Globe } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "wouter";
 
 export default function Companies() {
   const [open, setOpen] = useState(false);
@@ -66,7 +67,11 @@ export default function Companies() {
               <TableBody>
                 {companies.map((company) => (
                   <TableRow key={company.id}>
-                    <TableCell className="font-medium">{company.name}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/companies/${company.id}`}>
+                        <span className="text-primary hover:underline cursor-pointer">{company.name}</span>
+                      </Link>
+                    </TableCell>
                     <TableCell>{company.industry}</TableCell>
                     <TableCell>{company.website && <a href={company.website} target="_blank" className="flex items-center gap-2 text-primary hover:underline"><Globe className="h-4 w-4" />{company.website}</a>}</TableCell>
                     <TableCell><div className="h-2 w-16 bg-muted rounded-full overflow-hidden"><div className="h-full bg-primary" style={{ width: `${company.relationshipStrength}%` }} /></div></TableCell>

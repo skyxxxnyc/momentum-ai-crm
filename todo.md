@@ -416,3 +416,9 @@
   - [x] Show deal-specific activity history
   - [x] Show related entity activity
 - [x] Ensure activity logs show across all related entities
+
+## Critical Bug Fixes
+- [x] Register detail page routes in App.tsx (company, contact, deal detail pages)
+- [x] Fix admin role assignment for project owner
+- [x] Verify detail pages open when clicking entities
+- [x] Verify admin privileges work correctly

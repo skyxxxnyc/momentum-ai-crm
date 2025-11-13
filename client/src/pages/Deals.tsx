@@ -57,7 +57,11 @@ export default function Deals() {
               <TableBody>
                 {deals.map((deal) => (
                   <TableRow key={deal.id}>
-                    <TableCell className="font-medium">{deal.title}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/deals/${deal.id}`}>
+                        <span className="text-primary hover:underline cursor-pointer">{deal.title}</span>
+                      </Link>
+                    </TableCell>
                     <TableCell>${(deal.value || 0).toLocaleString()}</TableCell>
                     <TableCell><span className="capitalize">{deal.stage.replace("_", " ")}</span></TableCell>
                     <TableCell>{deal.probability}%</TableCell>
