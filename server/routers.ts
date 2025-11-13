@@ -11,6 +11,7 @@ import { prospectingRouter } from "./routers/prospecting";
 import { schedulerRouter } from "./routers/scheduler";
 import { blogRouter } from "./routers/blog";
 import { notionRouter } from "./routers/notion";
+import { knowledgeRouter } from "./routers/knowledge";
 import { attachmentsRouter } from "./routers/attachments";
 import { bulkRouter } from "./routers/bulk";
 import * as db from "./db";
@@ -27,6 +28,7 @@ export const appRouter = router({
   scheduler: schedulerRouter,
   blog: blogRouter,
   notion: notionRouter,
+  knowledge: knowledgeRouter,
   attachments: attachmentsRouter,
   bulk: bulkRouter,
   

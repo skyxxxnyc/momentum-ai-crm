@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LogOut, PanelLeft, CalendarClock, Clock, PenSquare, Database } from "lucide-react";
+import { LogOut, PanelLeft, CalendarClock, Clock, PenSquare, Database, Library } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -66,6 +66,7 @@ const menuItems = [
   { icon: BookOpen, label: "Articles", path: "/articles" },
   { icon: PenSquare, label: "Blog Editor", path: "/blog-editor" },
   { icon: Database, label: "Notion", path: "/notion" },
+  { icon: Library, label: "Knowledge Hub", path: "/knowledge" },
   { icon: Users, label: "Team", path: "/team" },
 ];
 

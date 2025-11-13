@@ -29,6 +29,13 @@
       "when": 1762991532107,
       "tag": "0003_nosy_darkstar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1762994822830,
+      "tag": "0004_jittery_blue_shield",
+      "breakpoints": true
     }
   ]
 }

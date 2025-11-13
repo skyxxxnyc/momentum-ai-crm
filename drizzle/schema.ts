@@ -274,6 +274,23 @@ export const articles = mysqlTable("articles", {
 export type Article = typeof articles.$inferSelect;
 export type InsertArticle = typeof articles.$inferInsert;
 
+export const knowledgeArticles = mysqlTable("knowledge_articles", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  content: text("content").notNull(),
+  category: varchar("category", { length: 100 }),
+  tags: text("tags"), // JSON array of tags
+  filePath: varchar("file_path", { length: 500 }), // Path to markdown file
+  author: varchar("author", { length: 255 }),
+  isPublic: int("is_public").default(0).notNull(), // 0 = internal only, 1 = public
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type KnowledgeArticle = typeof knowledgeArticles.$inferSelect;
+export type InsertKnowledgeArticle = typeof knowledgeArticles.$inferInsert;
+
 /**
  * Deal comments table - collaborative commenting
  */

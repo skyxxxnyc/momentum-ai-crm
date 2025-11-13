@@ -299,3 +299,14 @@
 - [x] Link ICPs to prospecting agent with Run button
 - [ ] Add ICP filtering and search
 - [ ] Show active/inactive status for ICPs
+
+
+## Knowledge Hub Integration
+- [x] Review and store AI Automation Playbook in knowledge hub
+- [x] Create knowledge base table in database
+- [x] Build knowledge hub UI page for browsing playbooks
+- [x] Add search and filtering for knowledge articles
+- [x] Create categories for different playbook types
+- [ ] Connect AI Chat to reference knowledge hub content
+- [ ] Connect AI agents to use playbook guidance
+- [ ] Add ability to upload and manage knowledge articles
