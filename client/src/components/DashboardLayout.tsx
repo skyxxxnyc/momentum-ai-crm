@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/collapsible";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LogOut, PanelLeft, PanelLeftClose, ChevronDown } from "lucide-react";
+import { LogOut, PanelLeft, PanelLeftClose, ChevronDown, BookTemplate } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -105,6 +105,7 @@ const menuGroups = [
     items: [
       { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
       { icon: FileText, label: "Email Templates", path: "/email-templates" },
+      { icon: BookTemplate, label: "Sequence Templates", path: "/sequence-templates" },
       { icon: BookOpen, label: "Articles", path: "/articles" },
       { icon: PenSquare, label: "Blog", path: "/blog-editor" },
     ],

@@ -22,6 +22,7 @@ import AIChat from "./pages/AIChat";
 import AIInsights from "./pages/AIInsights";
 import EmailTemplates from "./pages/EmailTemplates";
 import EmailSequenceDetail from "./pages/EmailSequenceDetail";
+import SequenceTemplateLibrary from "./pages/SequenceTemplateLibrary";
 import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/collateral" component={CollateralGenerator} />
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/email-sequences/:id" component={EmailSequenceDetail} />
+      <Route path="/sequence-templates" component={SequenceTemplateLibrary} />
       <Route path="/team" component={Team} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/prospecting" component={ProspectingAgent} />

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -5,13 +6,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BarChart3, Users, Mail, TrendingUp } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, BarChart3, Users, Mail, TrendingUp, BookTemplate } from "lucide-react";
 import { SequenceBuilder } from "@/components/SequenceBuilder";
+import { toast } from "sonner";
 
 export default function EmailSequenceDetail() {
   const params = useParams();
   const [, navigate] = useLocation();
   const sequenceId = parseInt(params.id as string);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState("");
+  const [templateDescription, setTemplateDescription] = useState("");
+  const [templateCategory, setTemplateCategory] = useState("");
+
+  const utils = trpc.useUtils();
+
+  const saveAsTemplate = trpc.sequenceTemplates.saveFromSequence.useMutation({
+    onSuccess: () => {
+      toast.success("Template saved successfully");
+      setSaveTemplateOpen(false);
+      setTemplateName("");
+      setTemplateDescription("");
+      setTemplateCategory("");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to save template");
+    },
+  });
 
   const { data: sequence, isLoading } = trpc.emailSequences.get.useQuery(
     { id: sequenceId },
@@ -75,15 +107,29 @@ export default function EmailSequenceDetail() {
         </div>
 
         <div className="flex items-start justify-between">
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl font-bold">{sequence.name}</h1>
             {sequence.description && (
               <p className="text-muted-foreground mt-1">{sequence.description}</p>
             )}
           </div>
-          <Badge variant="secondary" className={getStatusColor(sequence.status)}>
-            {sequence.status}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setTemplateName(sequence.name + " Template");
+                setTemplateDescription(sequence.description || "");
+                setSaveTemplateOpen(true);
+              }}
+            >
+              <BookTemplate className="h-4 w-4 mr-2" />
+              Save as Template
+            </Button>
+            <Badge variant="secondary" className={getStatusColor(sequence.status)}>
+              {sequence.status}
+            </Badge>
+          </div>
         </div>
 
         {/* Analytics Overview */}
@@ -272,6 +318,79 @@ export default function EmailSequenceDetail() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Save as Template Dialog */}
+        <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Save as Template</DialogTitle>
+              <DialogDescription>
+                Save this sequence as a reusable template
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!templateName.trim()) return;
+                saveAsTemplate.mutate({
+                  sequenceId,
+                  name: templateName,
+                  description: templateDescription || undefined,
+                  category: templateCategory || undefined,
+                });
+              }}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="template-name">Template Name *</Label>
+                <Input
+                  id="template-name"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  placeholder="e.g., Welcome Series Template"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="template-description">Description</Label>
+                <Textarea
+                  id="template-description"
+                  value={templateDescription}
+                  onChange={(e) => setTemplateDescription(e.target.value)}
+                  placeholder="Describe this template"
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="template-category">Category</Label>
+                <Input
+                  id="template-category"
+                  value={templateCategory}
+                  onChange={(e) => setTemplateCategory(e.target.value)}
+                  placeholder="e.g., Onboarding, Sales, Follow-up"
+                />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setSaveTemplateOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!templateName.trim() || saveAsTemplate.isPending}
+                >
+                  Save Template
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

@@ -687,3 +687,38 @@ export const emailMessagesRelations = relations(emailMessages, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+/**
+ * Sequence templates table - reusable sequence templates
+ */
+export const sequenceTemplates = mysqlTable("sequence_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  tags: json("tags").$type<string[]>(),
+  steps: json("steps").$type<Array<{
+    stepNumber: number;
+    subject: string;
+    body: string;
+    delayDays: number;
+  }>>().notNull(),
+  usageCount: int("usageCount").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  isPublic: boolean("isPublic").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("category_idx").on(table.category),
+  createdByIdx: index("created_by_idx").on(table.createdBy),
+}));
+
+export type SequenceTemplate = typeof sequenceTemplates.$inferSelect;
+export type InsertSequenceTemplate = typeof sequenceTemplates.$inferInsert;
+
+export const sequenceTemplatesRelations = relations(sequenceTemplates, ({ one }) => ({
+  creator: one(users, {
+    fields: [sequenceTemplates.createdBy],
+    references: [users.id],
+  }),
+}));
