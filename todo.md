@@ -560,3 +560,7 @@
 - [x] Redesign feature cards with geometric shapes and bold styling
 - [x] Update pricing section with neobrutalist card design
 - [x] Ensure landing page is accessible without authentication
+
+## Onboarding Tour Fix
+- [x] Disable onboarding tour on landing page
+- [x] Only show onboarding tour after user logs in (on dashboard)

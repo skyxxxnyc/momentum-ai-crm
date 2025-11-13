@@ -1,12 +1,21 @@
 import { useState, useEffect } from "react";
 import Joyride, { Step, CallBackProps, STATUS } from "react-joyride";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from "wouter";
 
 const ONBOARDING_KEY = "siaCRM_onboarding_completed";
 
 export function OnboardingTour() {
   const [run, setRun] = useState(false);
+  const { isAuthenticated, loading } = useAuth();
+  const [location] = useLocation();
 
   useEffect(() => {
+    // Only run tour if user is authenticated AND not on landing page
+    if (loading || !isAuthenticated || location === "/") {
+      return;
+    }
+
     // Check if user has completed onboarding
     const completed = localStorage.getItem(ONBOARDING_KEY);
     if (!completed) {
@@ -16,7 +25,7 @@ export function OnboardingTour() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isAuthenticated, loading, location]);
 
   const steps: Step[] = [
     {
