@@ -239,3 +239,26 @@
 - [x] Add file deletion with S3 cleanup
 - [x] Display file metadata (name, size, upload date)
 - [x] Create DealDetail and CompanyDetail pages
+
+
+## Bulk Operations
+- [x] Create bulk email API endpoint
+- [x] Create bulk status update API endpoint
+- [x] Create bulk tag assignment API endpoint
+- [x] Create bulk delete API endpoint
+- [x] Add multi-select checkboxes to Contacts table
+- [x] Add bulk action toolbar with email, update, tag, delete buttons
+- [x] Implement select all / deselect all functionality
+- [x] Add confirmation dialogs for bulk operations
+- [ ] Add multi-select checkboxes to Deals table
+- [ ] Add multi-select checkboxes to Leads table
+
+## Contact Detail Pages
+- [x] Create ContactDetail page at /contacts/:id
+- [x] Display full contact information
+- [x] Show relationship history with companies
+- [x] Display activity timeline
+- [x] Add file attachments support for contacts
+- [x] Link to related deals and companies
+- [x] Mobile-responsive contact detail layout
+- [ ] Add edit contact functionality

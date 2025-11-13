@@ -12,6 +12,7 @@ import { schedulerRouter } from "./routers/scheduler";
 import { blogRouter } from "./routers/blog";
 import { notionRouter } from "./routers/notion";
 import { attachmentsRouter } from "./routers/attachments";
+import { bulkRouter } from "./routers/bulk";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -27,6 +28,7 @@ export const appRouter = router({
   blog: blogRouter,
   notion: notionRouter,
   attachments: attachmentsRouter,
+  bulk: bulkRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

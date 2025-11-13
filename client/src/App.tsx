@@ -8,7 +8,7 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { CommandPalette } from "./components/CommandPalette";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
-import Contacts from "./pages/Contacts";
+import ContactsWithBulk from "@/pages/ContactsWithBulk";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import DealsKanban from "./pages/DealsKanban";
@@ -32,12 +32,13 @@ import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import DealDetail from "@/pages/DealDetail";
 import CompanyDetail from "@/pages/CompanyDetail";
+import ContactDetail from "@/pages/ContactDetail";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
-      <Route path="/contacts" component={Contacts} />
+      <Route path="/contacts" component={ContactsWithBulk} />
       <Route path="/companies" component={Companies} />
       <Route path="/deals" component={Deals} />
       <Route path="/deals/kanban" component={DealsKanban} />
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/deals/:id" component={DealDetail} />
       <Route path="/companies/:id" component={CompanyDetail} />
+      <Route path="/contacts/:id" component={ContactDetail} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
