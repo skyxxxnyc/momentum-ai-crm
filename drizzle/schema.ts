@@ -608,3 +608,82 @@ export const notesRelations = relations(notes, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+/**
+ * Email templates table - reusable email templates
+ */
+export const emailTemplates = mysqlTable("email_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body").notNull(),
+  category: varchar("category", { length: 100 }),
+  ownerId: int("ownerId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  ownerIdx: index("owner_idx").on(table.ownerId),
+}));
+
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+
+/**
+ * Email threads table - email conversations with contacts
+ */
+export const emailThreads = mysqlTable("email_threads", {
+  id: int("id").autoincrement().primaryKey(),
+  contactId: int("contactId").notNull(),
+  subject: varchar("subject", { length: 500 }),
+  lastMessageAt: timestamp("lastMessageAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  contactIdx: index("contact_idx").on(table.contactId),
+}));
+
+export type EmailThread = typeof emailThreads.$inferSelect;
+export type InsertEmailThread = typeof emailThreads.$inferInsert;
+
+/**
+ * Email messages table - individual emails in threads
+ */
+export const emailMessages = mysqlTable("email_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  threadId: int("threadId").notNull(),
+  fromEmail: varchar("fromEmail", { length: 320 }).notNull(),
+  toEmail: varchar("toEmail", { length: 320 }).notNull(),
+  subject: varchar("subject", { length: 500 }),
+  body: text("body"),
+  direction: mysqlEnum("direction", ["inbound", "outbound"]).notNull(),
+  status: mysqlEnum("status", ["sent", "delivered", "opened", "clicked", "bounced", "failed"]).default("sent"),
+  openedAt: timestamp("openedAt"),
+  clickedAt: timestamp("clickedAt"),
+  sentBy: int("sentBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  threadIdx: index("thread_idx").on(table.threadId),
+  statusIdx: index("status_idx").on(table.status),
+}));
+
+export type EmailMessage = typeof emailMessages.$inferSelect;
+export type InsertEmailMessage = typeof emailMessages.$inferInsert;
+
+export const emailThreadsRelations = relations(emailThreads, ({ one, many }) => ({
+  contact: one(contacts, {
+    fields: [emailThreads.contactId],
+    references: [contacts.id],
+  }),
+  messages: many(emailMessages),
+}));
+
+export const emailMessagesRelations = relations(emailMessages, ({ one }) => ({
+  thread: one(emailThreads, {
+    fields: [emailMessages.threadId],
+    references: [emailThreads.id],
+  }),
+  sender: one(users, {
+    fields: [emailMessages.sentBy],
+    references: [users.id],
+  }),
+}));

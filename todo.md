@@ -480,3 +480,14 @@
 - [ ] Implement automated stage transitions based on actions
 - [ ] Create pipeline velocity metrics
 - [ ] Add filters for deal owner, date range, value range
+
+## Email Integration
+- [x] Create email database schema (templates, threads, messages)
+- [x] Build email templates management system with CRUD
+- [x] Create email composer component with template selection
+- [x] Implement email tracking (sent, delivered, opened, clicked)
+- [x] Add email history widget to contact detail pages
+- [x] Create Email Templates management page
+- [ ] Build email sequence automation with step delays
+- [ ] Add email sequence enrollment for contacts
+- [ ] Create email analytics dashboard

@@ -25,6 +25,7 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { formatDistanceToNow } from "date-fns";
 import { EditableField } from "@/components/EditableField";
 import { NotesList } from "@/components/NotesList";
+import { EmailHistory } from "@/components/EmailHistory";
 
 export default function ContactDetail() {
   const params = useParams();
@@ -184,6 +185,7 @@ export default function ContactDetail() {
           <TabsTrigger value="deals">Deals ({contactDeals.length})</TabsTrigger>
           <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
+          <TabsTrigger value="email">Email</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -433,6 +435,28 @@ export default function ContactDetail() {
             </CardHeader>
             <CardContent>
               <NotesList entityType="contact" entityId={contactId} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Communication</CardTitle>
+              <CardDescription>
+                View email history and send new emails
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {contact?.email ? (
+                <EmailHistory
+                  contactId={contactId}
+                  contactEmail={contact.email}
+                  contactName={`${contact.firstName} ${contact.lastName}`.trim()}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">No email address on file for this contact.</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -20,6 +20,7 @@ import Activities from "./pages/Activities";
 import Articles from "./pages/Articles";
 import AIChat from "./pages/AIChat";
 import AIInsights from "./pages/AIInsights";
+import EmailTemplates from "./pages/EmailTemplates";
 import CollateralGenerator from "./pages/CollateralGenerator";
 import EmailSequences from "./pages/EmailSequences";
 import Team from "./pages/Team";
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/articles" component={Articles} />
       <Route path="/ai-chat" component={AIChat} />
       <Route path="/ai-insights" component={AIInsights} />
+      <Route path="/email-templates" component={EmailTemplates} />
       <Route path="/collateral" component={CollateralGenerator} />
       <Route path="/email-sequences" component={EmailSequences} />
       <Route path="/team" component={Team} />

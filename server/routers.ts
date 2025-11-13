@@ -17,6 +17,8 @@ import { bulkRouter } from "./routers/bulk";
 import { activityRouter } from "./routers/activity";
 import { notesRouter } from "./routers/notes";
 import { tasksRouter } from "./routers/tasks";
+import { emailTemplatesRouter } from "./routers/emailTemplates";
+import { emailTrackingRouter } from "./routers/emailTracking";
 import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
@@ -69,6 +71,8 @@ export const appRouter = router({
   activity: activityRouter,
   notes: notesRouter,
   tasks: tasksRouter,
+  emailTemplates: emailTemplatesRouter,
+  emailTracking: emailTrackingRouter,
   system: systemRouter,
   ai: aiRouter,
   email: emailRouter,

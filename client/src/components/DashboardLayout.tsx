@@ -104,6 +104,7 @@ const menuGroups = [
     label: "Marketing",
     items: [
       { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
+      { icon: FileText, label: "Email Templates", path: "/email-templates" },
       { icon: BookOpen, label: "Articles", path: "/articles" },
       { icon: PenSquare, label: "Blog", path: "/blog-editor" },
     ],
