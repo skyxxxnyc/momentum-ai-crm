@@ -3,10 +3,24 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, DollarSign, TrendingUp, Calendar, User, Building2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  ArrowLeft,
+  Building2,
+  Users,
+  Target,
+  Activity,
+  Clock,
+  DollarSign,
+  Calendar,
+  TrendingUp,
+  AlertCircle,
+} from "lucide-react";
 import { Link, useParams } from "wouter";
-import { FileAttachments } from "@/components/FileAttachments";
+import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import { formatDistanceToNow } from "date-fns";
 
 export default function DealDetail() {
   const params = useParams();
@@ -16,15 +30,14 @@ export default function DealDetail() {
     select: (deals) => deals.find((d: any) => d.id === dealId),
   });
 
-  const { addItem } = useRecentlyViewed();
+  const { data: allCompanies } = trpc.companies.list.useQuery();
+  const { data: allContacts } = trpc.contacts.list.useQuery();
+  const { data: activities } = trpc.activity.byEntity.useQuery(
+    { entityType: "deal", entityId: dealId },
+    { enabled: !!dealId }
+  );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-12 text-muted-foreground">Loading deal...</div>
-      </div>
-    );
-  }
+  const { addItem } = useRecentlyViewed();
 
   // Track recently viewed
   if (deal) {
@@ -36,143 +49,316 @@ export default function DealDetail() {
     });
   }
 
-  if (!deal) {
+  // Find linked company and contact
+  const company = allCompanies?.find((c: any) => c.id === deal?.companyId);
+  const contact = allContacts?.find((c: any) => c.id === deal?.contactId);
+
+  const getIcon = (entityType: string) => {
+    switch (entityType) {
+      case "contact":
+        return <Users className="h-4 w-4" />;
+      case "company":
+        return <Building2 className="h-4 w-4" />;
+      case "deal":
+        return <Target className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
+    }
+  };
+
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case "created":
+        return "text-green-500";
+      case "updated":
+        return "text-blue-500";
+      case "deleted":
+        return "text-red-500";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case "closed_won":
+        return "bg-green-500";
+      case "closed_lost":
+        return "bg-red-500";
+      case "negotiation":
+        return "bg-yellow-500";
+      case "proposal":
+        return "bg-blue-500";
+      case "qualified":
+        return "bg-purple-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  const getHealthColor = (health: string) => {
+    switch (health) {
+      case "healthy":
+        return "text-green-500";
+      case "at_risk":
+        return "text-yellow-500";
+      case "stale":
+        return "text-orange-500";
+      case "critical":
+        return "text-red-500";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Card className="border-2">
-          <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-semibold mb-2">Deal Not Found</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              The deal you're looking for doesn't exist.
-            </p>
-            <Link href="/deals">
-              <Button>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Deals
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="container py-8">
+        <div className="text-center">Loading...</div>
       </div>
     );
   }
 
-  const getStageColor = (stage: string) => {
-    const colors: Record<string, string> = {
-      lead: "bg-gray-500",
-      qualified: "bg-blue-500",
-      proposal: "bg-yellow-500",
-      negotiation: "bg-orange-500",
-      closed_won: "bg-primary",
-      closed_lost: "bg-red-500",
-    };
-    return colors[stage] || "bg-gray-500";
-  };
+  if (!deal) {
+    return (
+      <div className="container py-8">
+        <div className="text-center">Deal not found</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="container py-8 space-y-6">
       {/* Header */}
-      <div>
-        <Link href="/deals">
-          <Button variant="ghost" size="sm" className="gap-2 mb-4">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Deals
-          </Button>
-        </Link>
-        <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/deals">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
           <div>
             <h1 className="text-3xl font-bold">{deal.title}</h1>
-            <p className="text-muted-foreground mt-1">Deal Details</p>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge className={getStageColor(deal.stage)}>
+                {deal.stage?.replace("_", " ").toUpperCase()}
+              </Badge>
+              {deal.isHot && (
+                <Badge variant="destructive">🔥 Hot Deal</Badge>
+              )}
+            </div>
           </div>
-          <Badge className={`${getStageColor(deal.stage)} text-white border-0`}>
-            {deal.stage.replace("_", " ").toUpperCase()}
-          </Badge>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Deal Information */}
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Deal Information</CardTitle>
-            <CardDescription>Key details about this opportunity</CardDescription>
+      {/* Overview Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Deal Value</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <DollarSign className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Value</p>
-                <p className="text-lg font-semibold">
-                  ${deal.value?.toLocaleString() || 0}
-                </p>
-              </div>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${(deal.value || 0).toLocaleString()}
             </div>
-
-            <div className="flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Probability</p>
-                <p className="text-lg font-semibold">{deal.probability || 0}%</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Calendar className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Created</p>
-                <p className="text-lg font-semibold">
-                  {new Date(deal.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-
-            {deal.expectedCloseDate && (
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Expected Close</p>
-                  <p className="text-lg font-semibold">
-                    {new Date(deal.expectedCloseDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
-
-        {/* Additional Info */}
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Additional Details</CardTitle>
-            <CardDescription>More information about this deal</CardDescription>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Probability</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            {deal.description && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Description</p>
-                <p className="text-sm">{deal.description}</p>
-              </div>
-            )}
-
-            {deal.source && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Source</p>
-                <Badge variant="outline">{deal.source}</Badge>
-              </div>
-            )}
-
-            {deal.lostReason && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Lost Reason</p>
-                <p className="text-sm text-destructive">{deal.lostReason}</p>
-              </div>
-            )}
+          <CardContent>
+            <div className="text-2xl font-bold">{deal.probability || 0}%</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Momentum Score</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{deal.momentumScore || 0}/100</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Deal Health</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-lg font-bold ${getHealthColor(deal.dealHealth)}`}>
+              {deal.dealHealth?.replace("_", " ").toUpperCase() || "N/A"}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* File Attachments */}
-      <FileAttachments entityType="deal" entityId={dealId} />
+      {/* Main Content */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Deal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Deal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {deal.description && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Description</p>
+                    <p className="text-sm">{deal.description}</p>
+                  </div>
+                )}
+                {deal.expectedCloseDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Expected Close Date</p>
+                      <p className="text-sm font-medium">
+                        {new Date(deal.expectedCloseDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {deal.actualCloseDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Actual Close Date</p>
+                      <p className="text-sm font-medium">
+                        {new Date(deal.actualCloseDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {deal.lastActivityAt && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Last Activity</p>
+                      <p className="text-sm font-medium">
+                        {formatDistanceToNow(new Date(deal.lastActivityAt), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Related Entities */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Related Entities</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {company ? (
+                  <Link href={`/companies/${company.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                      <Building2 className="h-8 w-8 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Company</p>
+                        <div className="font-medium">{company.name}</div>
+                        {company.industry && (
+                          <div className="text-sm text-muted-foreground">{company.industry}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="text-sm text-muted-foreground">No company linked</div>
+                )}
+
+                {contact ? (
+                  <Link href={`/contacts/${contact.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                      <Avatar>
+                        <AvatarFallback>
+                          {contact.firstName?.charAt(0)}{contact.lastName?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Contact</p>
+                        <div className="font-medium">
+                          {contact.firstName} {contact.lastName}
+                        </div>
+                        {contact.title && (
+                          <div className="text-sm text-muted-foreground">{contact.title}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="text-sm text-muted-foreground">No contact linked</div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="activity" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity History</CardTitle>
+              <CardDescription>
+                All activity related to this deal
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!activities || activities.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No activity yet
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {activities.map((activity: any) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {activity.userName?.charAt(0).toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-sm">{activity.userName || "User"}</span>
+                          <span className={`text-sm ${getActionColor(activity.action)}`}>
+                            {activity.action}
+                          </span>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            {getIcon(activity.entityType)}
+                            <span className="text-sm">{activity.entityType}</span>
+                          </div>
+                        </div>
+                        {activity.entityName && (
+                          <div className="text-sm font-medium mt-1">{activity.entityName}</div>
+                        )}
+                        {activity.description && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {activity.description}
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                          <Clock className="h-3 w-3" />
+                          {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

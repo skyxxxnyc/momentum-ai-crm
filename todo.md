@@ -397,3 +397,22 @@
 - [x] Document all available shortcuts (Ctrl+K, navigation, etc.)
 - [x] Add visual keyboard key representations
 - [x] Make accessible from header or footer
+
+## Account-Based CRM Detail Pages
+- [x] Enhance activity logging for companies and deals
+- [x] Build comprehensive company detail page
+  - [x] Show company information card
+  - [x] Display linked contacts list
+  - [x] Display linked deals list
+  - [x] Show activity history for company and related entities
+- [x] Enhance contact detail page
+  - [x] Show contact information card
+  - [x] Display linked company information
+  - [x] Show contact-specific activity history
+  - [x] Show company activity context
+- [x] Build deal detail page
+  - [x] Show deal information card
+  - [x] Display linked company and contact
+  - [x] Show deal-specific activity history
+  - [x] Show related entity activity
+- [x] Ensure activity logs show across all related entities

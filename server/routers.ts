@@ -123,7 +123,16 @@ export const appRouter = router({
         twitterUrl: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        return db.createCompany({ ...input, ownerId: ctx.user.id });
+        const company = await db.createCompany({ ...input, ownerId: ctx.user.id });
+        await logActivity({
+          userId: ctx.user.id,
+          action: "created",
+          entityType: "company",
+          entityId: company.id,
+          entityName: input.name,
+          description: `Created new company ${input.name}`,
+        });
+        return company;
       }),
     
     update: protectedProcedure
@@ -147,15 +156,38 @@ export const appRouter = router({
         relationshipStrength: z.number().optional(),
         aiSummary: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
-        return db.updateCompany(id, data);
+        const company = await db.updateCompany(id, data);
+        if (company) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "updated",
+            entityType: "company",
+            entityId: id,
+            entityName: company.name,
+            description: `Updated company ${company.name}`,
+          });
+        }
+        return company;
       }),
     
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
-        return db.deleteCompany(input.id);
+      .mutation(async ({ ctx, input }) => {
+        const company = await db.getCompanyById(input.id);
+        const result = await db.deleteCompany(input.id);
+        if (company) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "deleted",
+            entityType: "company",
+            entityId: input.id,
+            entityName: company.name,
+            description: `Deleted company ${company.name}`,
+          });
+        }
+        return result;
       }),
   }),
 
@@ -294,7 +326,17 @@ export const appRouter = router({
         contactId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        return db.createDeal({ ...input, ownerId: ctx.user.id });
+        const deal = await db.createDeal({ ...input, ownerId: ctx.user.id });
+        await logActivity({
+          userId: ctx.user.id,
+          action: "created",
+          entityType: "deal",
+          entityId: deal.id,
+          entityName: input.title,
+          description: `Created new deal ${input.title}`,
+          metadata: { companyId: input.companyId, contactId: input.contactId },
+        });
+        return deal;
       }),
     
     update: protectedProcedure
@@ -314,15 +356,39 @@ export const appRouter = router({
         lastActivityAt: z.date().optional(),
         isHot: z.boolean().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
-        return db.updateDeal(id, data);
+        const deal = await db.updateDeal(id, data);
+        if (deal) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "updated",
+            entityType: "deal",
+            entityId: id,
+            entityName: deal.title,
+            description: `Updated deal ${deal.title}`,
+            metadata: { stage: data.stage, value: data.value },
+          });
+        }
+        return deal;
       }),
     
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
-        return db.deleteDeal(input.id);
+      .mutation(async ({ ctx, input }) => {
+        const deal = await db.getDealById(input.id);
+        const result = await db.deleteDeal(input.id);
+        if (deal) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "deleted",
+            entityType: "deal",
+            entityId: input.id,
+            entityName: deal.title,
+            description: `Deleted deal ${deal.title}`,
+          });
+        }
+        return result;
       }),
   }),
 

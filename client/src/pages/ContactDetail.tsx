@@ -3,10 +3,26 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Mail, Phone, Building2, Briefcase, Calendar } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  ArrowLeft,
+  Building2,
+  Mail,
+  Phone,
+  MapPin,
+  Users,
+  Target,
+  Activity,
+  Clock,
+  Linkedin,
+  Twitter,
+  Briefcase,
+} from "lucide-react";
 import { Link, useParams } from "wouter";
-import { FileAttachments } from "@/components/FileAttachments";
+import { toast } from "sonner";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import { formatDistanceToNow } from "date-fns";
 
 export default function ContactDetail() {
   const params = useParams();
@@ -16,259 +32,370 @@ export default function ContactDetail() {
     select: (contacts) => contacts.find((c: any) => c.id === contactId),
   });
 
-  const { data: companies } = trpc.companies.list.useQuery();
-  const { data: deals } = trpc.deals.list.useQuery();
-  const { data: activities } = trpc.activities.list.useQuery();
-  const { addItem } = useRecentlyViewed();
+  const { data: allCompanies } = trpc.companies.list.useQuery();
+  const { data: allDeals } = trpc.deals.list.useQuery();
+  const { data: activities } = trpc.activity.byEntity.useQuery(
+    { entityType: "contact", entityId: contactId },
+    { enabled: !!contactId }
+  );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-12 text-muted-foreground">Loading contact...</div>
-      </div>
-    );
-  }
+  const { addItem } = useRecentlyViewed();
 
   // Track recently viewed
   if (contact) {
     addItem({
       id: contact.id,
       type: "contact",
-      name: contact.name || "Unnamed Contact",
+      name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
       path: `/contacts/${contact.id}`,
     });
   }
 
-  if (!contact) {
+  // Find linked company and deals
+  const company = allCompanies?.find((c: any) => c.id === contact?.companyId);
+  const contactDeals = allDeals?.filter((d: any) => d.contactId === contactId) || [];
+
+  const getIcon = (entityType: string) => {
+    switch (entityType) {
+      case "contact":
+        return <Users className="h-4 w-4" />;
+      case "company":
+        return <Building2 className="h-4 w-4" />;
+      case "deal":
+        return <Target className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
+    }
+  };
+
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case "created":
+        return "text-green-500";
+      case "updated":
+        return "text-blue-500";
+      case "deleted":
+        return "text-red-500";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Card className="border-2">
-          <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-semibold mb-2">Contact Not Found</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              The contact you're looking for doesn't exist.
-            </p>
-            <Link href="/contacts">
-              <Button>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Contacts
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="container py-8">
+        <div className="text-center">Loading...</div>
       </div>
     );
   }
 
-  // Find related company
-  const relatedCompany = companies?.find((c: any) => c.id === contact.companyId);
-
-  // Find related deals
-  const relatedDeals = deals?.filter((d: any) => d.contactId === contactId) || [];
-
-  // Find related activities
-  const relatedActivities = activities?.filter((a: any) => a.contactId === contactId) || [];
+  if (!contact) {
+    return (
+      <div className="container py-8">
+        <div className="text-center">Contact not found</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="container py-8 space-y-6">
       {/* Header */}
-      <div>
-        <Link href="/contacts">
-          <Button variant="ghost" size="sm" className="gap-2 mb-4">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Contacts
-          </Button>
-        </Link>
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">
-              {contact.firstName} {contact.lastName}
-            </h1>
-            <p className="text-muted-foreground mt-1">Contact Profile</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/contacts">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarFallback className="text-2xl">
+                {contact.firstName?.charAt(0)}{contact.lastName?.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {contact.firstName} {contact.lastName}
+              </h1>
+              {contact.title && (
+                <p className="text-muted-foreground">{contact.title}</p>
+              )}
+            </div>
           </div>
-          {contact.relationshipStrength && (
-            <Badge
-              variant={
-                contact.relationshipStrength === "strong"
-                  ? "default"
-                  : contact.relationshipStrength === "medium"
-                  ? "secondary"
-                  : "outline"
-              }
-            >
-              {contact.relationshipStrength} relationship
-            </Badge>
-          )}
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Contact Information */}
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-            <CardDescription>Basic details and contact info</CardDescription>
+      {/* Overview Cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Company</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            {contact.email && (
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="text-sm font-medium text-primary hover:underline"
-                  >
-                    {contact.email}
-                  </a>
+          <CardContent>
+            {company ? (
+              <Link href={`/companies/${company.id}`}>
+                <div className="text-lg font-bold hover:text-primary cursor-pointer">
+                  {company.name}
                 </div>
-              </div>
-            )}
-
-            {contact.phone && (
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <a
-                    href={`tel:${contact.phone}`}
-                    className="text-sm font-medium text-primary hover:underline"
-                  >
-                    {contact.phone}
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {contact.title && (
-              <div className="flex items-center gap-3">
-                <Briefcase className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Title</p>
-                  <p className="text-sm font-medium">{contact.title}</p>
-                </div>
-              </div>
-            )}
-
-            {relatedCompany && (
-              <div className="flex items-center gap-3">
-                <Building2 className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Company</p>
-                  <Link href={`/companies/${relatedCompany.id}`}>
-                    <p className="text-sm font-medium text-primary hover:underline">
-                      {relatedCompany.name}
-                    </p>
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {contact.createdAt && (
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Added</p>
-                  <p className="text-sm font-medium">
-                    {new Date(contact.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
+              </Link>
+            ) : (
+              <div className="text-sm text-muted-foreground">No company linked</div>
             )}
           </CardContent>
         </Card>
-
-        {/* Additional Info */}
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Additional Details</CardTitle>
-            <CardDescription>More information about this contact</CardDescription>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Deals</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            {contact.notes && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Notes</p>
-                <p className="text-sm">{contact.notes}</p>
-              </div>
-            )}
-
-            {contact.source && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Source</p>
-                <Badge variant="outline">{contact.source}</Badge>
-              </div>
-            )}
-
-            {contact.tags && (
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Tags</p>
-                <div className="flex flex-wrap gap-2">
-                  {JSON.parse(contact.tags || "[]").map((tag: string, idx: number) => (
-                    <Badge key={idx} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
+          <CardContent>
+            <div className="text-2xl font-bold">{contactDeals.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Relationship</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{contact.relationshipStrength || 0}/100</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Related Deals */}
-      {relatedDeals.length > 0 && (
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Related Deals</CardTitle>
-            <CardDescription>{relatedDeals.length} active deals</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {relatedDeals.map((deal: any) => (
-                <Link key={deal.id} href={`/deals/${deal.id}`}>
-                  <div className="flex items-center justify-between p-3 border rounded hover:bg-accent cursor-pointer">
-                    <div>
-                      <p className="font-medium">{deal.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        ${deal.value?.toLocaleString() || 0} • {deal.stage}
-                      </p>
+      {/* Main Content */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="deals">Deals ({contactDeals.length})</TabsTrigger>
+          <TabsTrigger value="activity">Activity ({activities?.length || 0})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Contact Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {contact.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {contact.email}
+                    </a>
+                  </div>
+                )}
+                {contact.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`tel:${contact.phone}`}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {contact.phone}
+                    </a>
+                  </div>
+                )}
+                {(contact.address || contact.city || contact.state) && (
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                    <div className="text-sm">
+                      {contact.address && <div>{contact.address}</div>}
+                      {(contact.city || contact.state) && (
+                        <div>
+                          {contact.city}
+                          {contact.city && contact.state && ", "}
+                          {contact.state} {contact.zipCode}
+                        </div>
+                      )}
+                      {contact.country && <div>{contact.country}</div>}
                     </div>
-                    <Badge variant="outline">{deal.probability}%</Badge>
                   </div>
+                )}
+                {contact.title && (
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{contact.title}</span>
+                  </div>
+                )}
+                {contact.linkedinUrl && (
+                  <div className="flex items-center gap-2">
+                    <Linkedin className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={contact.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      LinkedIn Profile
+                    </a>
+                  </div>
+                )}
+                {contact.twitterUrl && (
+                  <div className="flex items-center gap-2">
+                    <Twitter className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={contact.twitterUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Twitter Profile
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Company Context */}
+            {company && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Company Context</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Link href={`/companies/${company.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                      <Building2 className="h-8 w-8 text-muted-foreground" />
+                      <div>
+                        <div className="font-medium">{company.name}</div>
+                        {company.industry && (
+                          <div className="text-sm text-muted-foreground">{company.industry}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                  {company.description && (
+                    <p className="text-sm text-muted-foreground">{company.description}</p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Notes */}
+            {contact.notes && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {contact.notes}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="deals" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Deals</CardTitle>
+                <Link href={`/deals/new?contactId=${contactId}&companyId=${contact.companyId || ""}`}>
+                  <Button size="sm">Create Deal</Button>
                 </Link>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Activity Timeline */}
-      {relatedActivities.length > 0 && (
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Activity Timeline</CardTitle>
-            <CardDescription>{relatedActivities.length} activities</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {relatedActivities.slice(0, 5).map((activity: any) => (
-                <div key={activity.id} className="flex gap-3 pb-3 border-b last:border-0">
-                  <div className="flex-1">
-                    <p className="font-medium">{activity.type}</p>
-                    <p className="text-sm text-muted-foreground">{activity.description}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(activity.createdAt).toLocaleString()}
-                    </p>
-                  </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {contactDeals.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No deals yet. Create a deal to get started.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {contactDeals.map((deal: any) => (
+                    <Link key={deal.id} href={`/deals/${deal.id}`}>
+                      <div className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                        <div className="flex-1">
+                          <div className="font-medium">{deal.title}</div>
+                          {deal.description && (
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {deal.description}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant="outline">{deal.stage}</Badge>
+                            {deal.value && (
+                              <span className="text-sm font-medium">
+                                ${deal.value.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* File Attachments */}
-      <FileAttachments entityType="contact" entityId={contactId} />
+        <TabsContent value="activity" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity History</CardTitle>
+              <CardDescription>
+                All activity related to this contact
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!activities || activities.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No activity yet
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {activities.map((activity: any) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {activity.userName?.charAt(0).toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-sm">{activity.userName || "User"}</span>
+                          <span className={`text-sm ${getActionColor(activity.action)}`}>
+                            {activity.action}
+                          </span>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            {getIcon(activity.entityType)}
+                            <span className="text-sm">{activity.entityType}</span>
+                          </div>
+                        </div>
+                        {activity.entityName && (
+                          <div className="text-sm font-medium mt-1">{activity.entityName}</div>
+                        )}
+                        {activity.description && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {activity.description}
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                          <Clock className="h-3 w-3" />
+                          {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
