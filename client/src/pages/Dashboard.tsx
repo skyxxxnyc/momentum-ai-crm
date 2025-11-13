@@ -5,6 +5,7 @@ import { TrendingUp, Users, Building2, DollarSign, Target, Activity, Zap, AlertC
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
+import { ActivityFeed } from "@/components/ActivityFeed";
 
 export default function Dashboard() {
   const { data: stats, isLoading } = trpc.dashboard.stats.useQuery();
@@ -45,9 +46,9 @@ export default function Dashboard() {
       
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          {/* Future: Add charts or activity feed here */}
+          <ActivityFeed />
         </div>
-        <div>
+        <div className="space-y-6">
           <RecentlyViewed />
         </div>
       </div>

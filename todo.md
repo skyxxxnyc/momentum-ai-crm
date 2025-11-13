@@ -382,3 +382,18 @@
 - [x] Add icon-only collapse mode for sidebar
 - [x] Show tooltips on hover when sidebar is collapsed
 - [x] Persist collapse state in localStorage
+
+## Activity Feed Widget
+- [x] Create activity feed database schema
+- [x] Build activity logging system for CRM actions
+- [x] Create ActivityFeed component with real-time updates
+- [x] Display recent actions (deals updated, contacts added, AI insights)
+- [x] Show timestamps and user attribution
+- [x] Add to Dashboard layout
+
+## Keyboard Shortcuts Panel
+- [x] Create keyboard shortcuts help modal
+- [x] Trigger with "?" key press
+- [x] Document all available shortcuts (Ctrl+K, navigation, etc.)
+- [x] Add visual keyboard key representations
+- [x] Make accessible from header or footer

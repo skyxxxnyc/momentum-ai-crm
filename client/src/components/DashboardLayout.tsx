@@ -38,6 +38,7 @@ import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { NotificationCenter } from "./NotificationCenter";
 import { OnboardingTour } from "./OnboardingTour";
+import { KeyboardShortcuts } from "./KeyboardShortcuts";
 
 import { 
   LayoutDashboard, 
@@ -181,6 +182,7 @@ export default function DashboardLayout({
   return (
     <>
       <OnboardingTour />
+      <KeyboardShortcuts />
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
         <Sidebar

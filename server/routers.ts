@@ -14,6 +14,8 @@ import { notionRouter } from "./routers/notion";
 import { knowledgeRouter } from "./routers/knowledge";
 import { attachmentsRouter } from "./routers/attachments";
 import { bulkRouter } from "./routers/bulk";
+import { activityRouter } from "./routers/activity";
+import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 import { getDb } from "./db";
@@ -62,6 +64,7 @@ async function getKnowledgeContext(query: string): Promise<string> {
 import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
+  activity: activityRouter,
   system: systemRouter,
   ai: aiRouter,
   email: emailRouter,
@@ -193,7 +196,16 @@ export const appRouter = router({
         referredBy: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        return db.createContact({ ...input, ownerId: ctx.user.id });
+        const contact = await db.createContact({ ...input, ownerId: ctx.user.id });
+        await logActivity({
+          userId: ctx.user.id,
+          action: "created",
+          entityType: "contact",
+          entityId: contact.id,
+          entityName: `${input.firstName} ${input.lastName || ""}`.trim(),
+          description: `Created new contact ${input.firstName} ${input.lastName || ""}`.trim(),
+        });
+        return contact;
       }),
     
     update: protectedProcedure
@@ -218,15 +230,38 @@ export const appRouter = router({
         notes: z.string().optional(),
         referredBy: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
-        return db.updateContact(id, data);
+        const contact = await db.updateContact(id, data);
+        if (contact) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "updated",
+            entityType: "contact",
+            entityId: id,
+            entityName: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+            description: `Updated contact ${contact.firstName} ${contact.lastName || ""}`.trim(),
+          });
+        }
+        return contact;
       }),
     
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
-        return db.deleteContact(input.id);
+      .mutation(async ({ ctx, input }) => {
+        const contact = await db.getContactById(input.id);
+        const result = await db.deleteContact(input.id);
+        if (contact) {
+          await logActivity({
+            userId: ctx.user.id,
+            action: "deleted",
+            entityType: "contact",
+            entityId: input.id,
+            entityName: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+            description: `Deleted contact ${contact.firstName} ${contact.lastName || ""}`.trim(),
+          });
+        }
+        return result;
       }),
   }),
 

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, index } from "drizzle-orm/mysql-core";
+import { boolean, index, int, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 
 /**
@@ -554,6 +554,31 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
   }),
   assignee: one(users, {
     fields: [tasks.assignedTo],
+    references: [users.id],
+  }),
+}));
+
+/**
+ * Activity Log table - tracks all CRM actions for activity feed
+ */
+export const activity_log = mysqlTable("activity_log", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  action: varchar("action", { length: 100 }).notNull(), // e.g., "created", "updated", "deleted"
+  entityType: varchar("entityType", { length: 50 }).notNull(), // e.g., "contact", "company", "deal"
+  entityId: int("entityId"),
+  entityName: varchar("entityName", { length: 255 }), // Display name of the entity
+  description: text("description"), // Human-readable description
+  metadata: json("metadata"), // Additional context as JSON
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ActivityLog = typeof activity_log.$inferSelect;
+export type InsertActivityLog = typeof activity_log.$inferInsert;
+
+export const activityLogRelations = relations(activity_log, ({ one }) => ({
+  user: one(users, {
+    fields: [activity_log.userId],
     references: [users.id],
   }),
 }));
