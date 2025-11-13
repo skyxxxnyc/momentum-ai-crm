@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -29,11 +30,12 @@ import {
 } from "@/components/ui/collapsible";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LogOut, PanelLeft, ChevronDown } from "lucide-react";
+import { LogOut, PanelLeft, PanelLeftClose, ChevronDown } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { NotificationCenter } from "./NotificationCenter";
 import { OnboardingTour } from "./OnboardingTour";
 
@@ -65,7 +67,7 @@ const menuGroups = [
     label: "Overview",
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-    ]
+    ],
   },
   {
     label: "CRM",
@@ -75,7 +77,7 @@ const menuGroups = [
       { icon: Target, label: "Deals", path: "/deals" },
       { icon: Target, label: "Pipeline", path: "/deals/kanban" },
       { icon: UserPlus, label: "Leads", path: "/leads" },
-    ]
+    ],
   },
   {
     label: "Productivity",
@@ -84,7 +86,7 @@ const menuGroups = [
       { icon: TrendingUp, label: "Goals", path: "/goals" },
       { icon: Activity, label: "Activities", path: "/activities" },
       { icon: CalendarClock, label: "Calendar", path: "/calendar" },
-    ]
+    ],
   },
   {
     label: "AI Tools",
@@ -95,7 +97,7 @@ const menuGroups = [
       { icon: Sparkles, label: "Prospecting", path: "/prospecting" },
       { icon: FileText, label: "ICPs", path: "/icps" },
       { icon: Clock, label: "Scheduler", path: "/prospecting-scheduler" },
-    ]
+    ],
   },
   {
     label: "Marketing",
@@ -103,7 +105,7 @@ const menuGroups = [
       { icon: Mail, label: "Email Sequences", path: "/email-sequences" },
       { icon: BookOpen, label: "Articles", path: "/articles" },
       { icon: PenSquare, label: "Blog", path: "/blog-editor" },
-    ]
+    ],
   },
   {
     label: "Settings",
@@ -111,20 +113,25 @@ const menuGroups = [
       { icon: Library, label: "Knowledge Hub", path: "/knowledge" },
       { icon: Database, label: "Notion Sync", path: "/notion" },
       { icon: Users, label: "Team", path: "/team" },
-    ]
+    ],
   },
 ];
 
-const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 280;
+const SIDEBAR_WIDTH_KEY = "dashboard_sidebar_width";
+const SIDEBAR_COLLAPSED_KEY = "dashboard_sidebar_collapsed";
+const DEFAULT_WIDTH = 240;
+const COLLAPSED_WIDTH = 64;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    return saved === "true";
+  });
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
@@ -132,6 +139,11 @@ export default function DashboardLayout({
   const { loading, user } = useAuth();
   const [openGroups, setOpenGroups] = useState<string[]>(["Overview", "CRM", "AI Tools"]);
   const [searchQuery, setSearchQuery] = useState("");
+  const logoutMutation = trpc.auth.logout.useMutation();
+
+  useEffect(() => {
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, isCollapsed.toString());
+  }, [isCollapsed]);
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -172,29 +184,33 @@ export default function DashboardLayout({
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
         <Sidebar
-          style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
+          style={{ "--sidebar-width": `${isCollapsed ? COLLAPSED_WIDTH : sidebarWidth}px` } as CSSProperties}
           className="border-r border-border"
         >
           <SidebarHeader className="border-b border-border p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 justify-center">
               <img src={APP_LOGO} alt={APP_TITLE} className="h-8 w-8" />
-              <span className="text-lg">
-                <span className="font-light">sia</span>
-                <span className="font-bold">CRM</span>
-              </span>
+              {!isCollapsed && (
+                <span className="text-lg">
+                  <span className="font-light">sia</span>
+                  <span className="font-bold">CRM</span>
+                </span>
+              )}
             </div>
           </SidebarHeader>
 
           <SidebarContent>
-            <div className="px-3 py-2">
-              <input
-                type="text"
-                placeholder="Search pages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
+            {!isCollapsed && (
+              <div className="px-3 py-2">
+                <input
+                  type="text"
+                  placeholder="Search pages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            )}
             <SidebarMenu>
               {menuGroups
                 .map((group) => ({
@@ -206,63 +222,103 @@ export default function DashboardLayout({
                   ),
                 }))
                 .filter((group) => group.items.length > 0)
-                .map((group) => (
-                <Collapsible
-                  key={group.label}
-                  open={openGroups.includes(group.label)}
-                  onOpenChange={() => toggleGroup(group.label)}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton className="w-full">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {group.label}
-                        </span>
-                        <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {group.items.map((item) => (
-                          <SidebarMenuSubItem key={item.path}>
-                            <SidebarMenuSubButton asChild>
-                              <a href={item.path} className="flex items-center gap-3 px-3 py-2">
-                                <item.icon className="h-4 w-4" />
-                                <span>{item.label}</span>
+                .map((group) =>
+                  isCollapsed ? (
+                  // Collapsed mode: show only icons with tooltips
+                  <div key={group.label} className="space-y-1">
+                    {group.items.map((item) => (
+                      <SidebarMenuItem key={item.path}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton asChild>
+                              <a href={item.path} className="flex items-center justify-center w-full">
+                                <item.icon className="h-5 w-5" />
                               </a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>{item.label}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </SidebarMenuItem>
+                    ))}
+                  </div>
+                ) : (
+                  // Expanded mode: show groups with labels
+                  <Collapsible
+                    key={group.label}
+                    open={openGroups.includes(group.label)}
+                    onOpenChange={() => toggleGroup(group.label)}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="w-full">
+                          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            {group.label}
+                          </span>
+                          <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {group.items.map((item) => (
+                            <SidebarMenuSubItem key={item.path}>
+                              <SidebarMenuSubButton asChild>
+                                <a href={item.path} className="flex items-center gap-3 px-3 py-2">
+                                  <item.icon className="h-4 w-4" />
+                                  <span>{item.label}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                )
+              )}
             </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className="border-t border-border p-4">
+          <SidebarFooter className="border-t border-border p-4 space-y-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="w-full justify-center"
+            >
+              {isCollapsed ? (
+                <PanelLeft className="h-4 w-4" />
+              ) : (
+                <>
+                  <PanelLeftClose className="h-4 w-4 mr-2" />
+                  <span>Collapse</span>
+                </>
+              )}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start gap-3 px-2">
+                <Button variant="ghost" className={`w-full gap-3 px-2 ${isCollapsed ? 'justify-center' : 'justify-start'}`}>
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {user.name?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col items-start text-sm overflow-hidden">
-                    <span className="font-medium truncate w-full">{user.name || "User"}</span>
-                    <span className="text-xs text-muted-foreground truncate w-full">
-                      {user.email || ""}
-                    </span>
-                  </div>
+                  {!isCollapsed && (
+                    <div className="flex flex-col items-start text-sm overflow-hidden">
+                      <span className="font-medium truncate w-full">{user.name || "User"}</span>
+                      <span className="text-xs text-muted-foreground truncate w-full">
+                        {user.email || ""}
+                      </span>
+                    </div>
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem
                   onClick={() => {
-                    window.trpc.auth.logout.mutate();
+                    logoutMutation.mutate();
                     window.location.href = getLoginUrl();
                   }}
                 >
