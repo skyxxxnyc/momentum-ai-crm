@@ -19,6 +19,7 @@ import { notesRouter } from "./routers/notes";
 import { tasksRouter } from "./routers/tasks";
 import { emailTemplatesRouter } from "./routers/emailTemplates";
 import { emailTrackingRouter } from "./routers/emailTracking";
+import { emailSequencesRouter } from "./routers/emailSequences";
 import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
@@ -73,6 +74,7 @@ export const appRouter = router({
   tasks: tasksRouter,
   emailTemplates: emailTemplatesRouter,
   emailTracking: emailTrackingRouter,
+  emailSequences: emailSequencesRouter,
   system: systemRouter,
   ai: aiRouter,
   email: emailRouter,

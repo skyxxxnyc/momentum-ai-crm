@@ -491,3 +491,14 @@
 - [ ] Build email sequence automation with step delays
 - [ ] Add email sequence enrollment for contacts
 - [ ] Create email analytics dashboard
+
+## Email Sequence Automation
+- [x] Create email sequences router with CRUD operations
+- [x] Build visual sequence builder with drag-and-drop steps
+- [x] Implement step management (add, edit, delete, reorder)
+- [x] Create enrollment management system
+- [ ] Add automatic enrollment triggers
+- [x] Build analytics dashboard with sequence metrics
+- [x] Show open rates, click rates, and conversion stats
+- [x] Display sequence performance charts
+- [x] Add contact enrollment status tracking
