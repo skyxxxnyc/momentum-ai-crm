@@ -323,3 +323,14 @@
 - [x] Create knowledge article preview and versioning
 - [x] Add brand guidelines extraction for AI context
 - [x] Implement smart context selection based on AI task type
+
+
+## Sidebar Navigation Consolidation
+- [x] Group related items into collapsible sections
+- [x] Create "CRM" section (Contacts, Companies, Deals, Pipeline, Leads)
+- [x] Create "Productivity" section (Tasks, Goals, Activities, Calendar)
+- [x] Create "AI Tools" section (AI Chat, AI Insights, Collateral, Prospecting, ICPs, Scheduler)
+- [x] Create "Marketing" section (Email Sequences, Articles, Blog)
+- [x] Create "Settings" section (Knowledge Hub, Notion Sync, Team)
+- [x] Reduce total visible items in sidebar
+- [x] Add expand/collapse functionality for groups

@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, openId, name, email, role FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 8pJvfpWLHhpry2Q.root --database F9qUjSkdCGXZEo5KvpYrmn --execute SELECT id, openId, name, email, role FROM users;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "YdypUApsMU3ni2gDBDA5fd",
+      "name": "SCHUYLER WHETSTONE",
+      "email": "schuyler@aigencyautomata.com",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\n1\tYdypUApsMU3ni2gDBDA5fd\tSCHUYLER WHETSTONE\tschuyler@aigencyautomata.com\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 92
+}
