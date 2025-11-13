@@ -262,3 +262,22 @@
 - [x] Link to related deals and companies
 - [x] Mobile-responsive contact detail layout
 - [ ] Add edit contact functionality
+
+
+## In-App Editing
+- [ ] Add inline edit mode to ContactDetail page
+- [ ] Add inline edit mode to DealDetail page
+- [ ] Add inline edit mode to CompanyDetail page
+- [ ] Add save/cancel buttons for edit mode
+- [ ] Implement optimistic updates for instant feedback
+- [ ] Add validation for required fields
+
+## ICP (Ideal Customer Profile) Management
+- [x] Enhance ICP page with full CRUD functionality
+- [x] Add ICP creation form with all fields
+- [x] Add ICP edit functionality
+- [x] Add ICP delete with confirmation
+- [x] Display ICP details in table
+- [x] Link ICPs to prospecting agent with Run button
+- [ ] Add ICP filtering and search
+- [ ] Show active/inactive status for ICPs
