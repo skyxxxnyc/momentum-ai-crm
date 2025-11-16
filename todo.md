@@ -451,6 +451,7 @@
 ## Bug Fixes
 - [x] Fix infinite re-render error in CompanyDetail component
 - [x] Fix 404 error when starting prospecting agent from ICP page
+- [x] Fix Select component empty string value error in CSV import
 
 ## Landing Page Redesign
 - [x] Apply neobrutalist design style (bold colors, thick borders, shadows)

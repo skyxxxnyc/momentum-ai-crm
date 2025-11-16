@@ -240,14 +240,14 @@ export function CSVImport({ open, onOpenChange, entityType, onImportComplete }: 
                           {field.required && <span className="text-destructive ml-1">*</span>}
                         </Label>
                         <Select
-                          value={fieldMapping[field.key] || ""}
-                          onValueChange={(value) => handleFieldMappingChange(field.key, value)}
+                          value={fieldMapping[field.key] || "__skip__"}
+                          onValueChange={(value) => handleFieldMappingChange(field.key, value === "__skip__" ? "" : value)}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select column..." />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">-- Skip --</SelectItem>
+                            <SelectItem value="__skip__">-- Skip --</SelectItem>
                             {columns.map((col) => (
                               <SelectItem key={col} value={col}>
                                 {col}
