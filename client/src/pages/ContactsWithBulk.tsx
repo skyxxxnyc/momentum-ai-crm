@@ -8,16 +8,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, User, Eye } from "lucide-react";
+import { Plus, User, Eye, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import { BulkActionsToolbar } from "@/components/BulkActionsToolbar";
+import { CSVImport } from "@/components/CSVImport";
 
 export default function ContactsWithBulk() {
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [emailData, setEmailData] = useState({ subject: "", body: "" });
+  const [csvImportOpen, setCSVImportOpen] = useState(false);
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", phone: "" });
 
   const utils = trpc.useUtils();
@@ -80,14 +82,19 @@ export default function ContactsWithBulk() {
           <h1 className="text-3xl font-bold">Contacts</h1>
           <p className="text-muted-foreground">Manage your contact relationships</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Contact
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => setCSVImportOpen(true)}>
+            <Upload className="h-4 w-4" />
+            Import CSV
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Contact
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Contact</DialogTitle>
             </DialogHeader>
@@ -136,6 +143,7 @@ export default function ContactsWithBulk() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <Card className="border-2">
@@ -245,6 +253,13 @@ export default function ContactsWithBulk() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <CSVImport
+        open={csvImportOpen}
+        onOpenChange={setCSVImportOpen}
+        entityType="contacts"
+        onImportComplete={() => utils.contacts.list.invalidate()}
+      />
     </div>
   );
 }

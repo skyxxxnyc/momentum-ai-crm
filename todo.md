@@ -206,8 +206,6 @@
 
 ## Future Enhancements (Optional)
 - [ ] Network Mapping visualization (who referred whom)
-- [ ] Bulk operations for contacts/deals/leads
-- [ ] File attachments for deals and companies
 - [ ] Advanced filtering and search
 - [ ] Export functionality (CSV, PDF reports)
 - [ ] Public blog view pages
@@ -307,9 +305,9 @@
 - [x] Build knowledge hub UI page for browsing playbooks
 - [x] Add search and filtering for knowledge articles
 - [x] Create categories for different playbook types
-- [ ] Connect AI Chat to reference knowledge hub content
-- [ ] Connect AI agents to use playbook guidance
-- [ ] Add ability to upload and manage knowledge articles
+- [x] Connect AI Chat to reference knowledge hub content
+- [x] Connect AI agents to use playbook guidance
+- [x] Add ability to upload and manage knowledge articles
 
 
 ## AI Knowledge Hub Integration
@@ -335,34 +333,6 @@
 - [x] Reduce total visible items in sidebar
 - [x] Add expand/collapse functionality for groups
 
-
-## Branding Update
-- [ ] Change app title from "Momentum AI" to "siaCRM"
-- [ ] Update logo/branding with "sia" in lighter weight, "CRM" in bold
-- [ ] Update all references in code and UI
-
-## Sidebar Search
-- [ ] Add search input at top of sidebar
-- [ ] Implement fuzzy search across all menu items
-- [ ] Show filtered results as user types
-- [ ] Highlight matching items and auto-expand groups
-- [ ] Add keyboard navigation (arrow keys, Enter to navigate)
-
-## Onboarding Tour
-- [ ] Create tour system with step-by-step walkthrough
-- [ ] Add tour steps for key features (ICPs, Prospecting, AI Chat, Deals)
-- [ ] Build tour UI with tooltips and highlights
-- [ ] Add "Skip Tour" and "Next" buttons
-- [ ] Store tour completion status in user preferences
-- [ ] Add "Restart Tour" option in settings
-
-## Recent Items Widget
-- [ ] Track recently viewed contacts, companies, and deals
-- [ ] Store recent items in localStorage or database
-- [ ] Add "Recent" section to sidebar or dashboard
-- [ ] Show last 5 accessed items with icons and timestamps
-- [ ] Add quick navigation to recent items
-- [ ] Clear recent items functionality
 
 ## Branding & UX Improvements
 - [x] Rebrand from "Momentum AI" to "siaCRM" with styled font weights
@@ -406,150 +376,77 @@
   - [x] Display linked deals list
   - [x] Show activity history for company and related entities
 - [x] Enhance contact detail page
-  - [x] Show contact information card
-  - [x] Display linked company information
-  - [x] Show contact-specific activity history
-  - [x] Show company activity context
+  - [x] Show contact information with company context
+  - [x] Display linked deals
+  - [x] Show activity timeline
 - [x] Build deal detail page
-  - [x] Show deal information card
-  - [x] Display linked company and contact
-  - [x] Show deal-specific activity history
-  - [x] Show related entity activity
-- [x] Ensure activity logs show across all related entities
+  - [x] Display deal information
+  - [x] Show related company and contact
+  - [x] Display activity history
+  - [x] Add file attachments
+- [x] Make entity names clickable in tables to open detail pages
+- [x] Ensure activity flows across all related entities
 
-## Critical Bug Fixes
-- [x] Register detail page routes in App.tsx (company, contact, deal detail pages)
-- [x] Fix admin role assignment for project owner
-- [x] Verify detail pages open when clicking entities
-- [x] Verify admin privileges work correctly
+## Notes & Comments System
+- [x] Create notes database table with user attribution
+- [x] Build notes tRPC router with CRUD operations
+- [x] Add notes UI component with create/edit/delete
+- [x] Display notes on company detail pages
+- [x] Display notes on contact detail pages
+- [x] Display notes on deal detail pages
+- [x] Show timestamps and user info for each note
+- [x] Add dedicated Notes tab on all detail pages
 
-## 1. Inline Editing on Detail Pages
-- [x] Add inline edit mode for company fields (name, industry, website, etc.)
-- [x] Add inline edit mode for contact fields (name, email, phone, title, etc.)
-- [x] Add inline edit mode for deal fields (title, value, stage, probability, etc.)
-- [x] Implement auto-save on blur or Enter key
-- [x] Show loading state during save
-- [x] Display success/error feedback
-- [x] Support ESC key to cancel editing
+## Tasks Management
+- [x] Create tasks database schema with due dates and priorities
+- [x] Build tasks tRPC router
+- [x] Add task creation dialog
+- [x] Link tasks to contacts, companies, and deals
+- [ ] Build tasks list page with filtering
+- [ ] Add task completion tracking
+- [ ] Display tasks widget on dashboard
+- [ ] Add task reminders and notifications
 
-## 2. Notes & Comments System
-- [x] Create notes database table with user, entity, timestamp
-- [x] Build NotesList component for detail pages
-- [x] Implement rich text editor for notes (markdown support)
-- [x] Add @mentions functionality for users
-- [ ] Show notes in activity timeline
-- [x] Support editing and deleting own notes
-- [x] Add notes tab to company/contact/deal detail pages
-
-## 3. Task & Reminder System
-- [x] Create tasks database table with due dates, assignments, status
-- [x] Build task creation modal with date picker
-- [x] Link tasks to companies, contacts, or deals
-- [ ] Implement task list view with filtering (all, mine, overdue)
-- [ ] Add task status updates (pending, completed, cancelled)
-- [ ] Create notification system for due tasks
-- [ ] Show upcoming tasks on Dashboard
-- [ ] Add tasks section to detail pages
-
-## 4. Bulk CSV Import
-- [ ] Create CSV upload component with drag-and-drop
-- [ ] Build field mapping interface (CSV columns → CRM fields)
-- [ ] Implement CSV parsing and validation
-- [ ] Add duplicate detection (by email for contacts, domain for companies)
-- [ ] Show import preview before committing
-- [ ] Create bulk insert procedures in backend
-- [ ] Display import results (success, skipped, errors)
-- [ ] Add import history tracking
-
-## 5. Email Integration
-- [ ] Create email_threads and email_messages tables
-- [ ] Build email tracking widget for contact detail pages
-- [ ] Implement email template system (create, edit, delete)
-- [ ] Add email sequence builder with steps and delays
-- [ ] Create email composer with template selection
-- [ ] Track email opens and clicks (if possible)
-- [ ] Link emails to contacts and deals
-- [ ] Show email history in activity timeline
-
-## 6. Advanced Pipeline Management
-- [ ] Implement drag-and-drop in Kanban view for deal stages
-- [ ] Add stage transition animations
-- [ ] Create win/loss reason capture on deal close
-- [ ] Build pipeline analytics (conversion rates, avg time per stage)
-- [ ] Add deal forecasting based on probability
-- [ ] Implement automated stage transitions based on actions
-- [ ] Create pipeline velocity metrics
-- [ ] Add filters for deal owner, date range, value range
-
-## Email Integration
+## Email System
 - [x] Create email database schema (templates, threads, messages)
-- [x] Build email templates management system with CRUD
-- [x] Create email composer component with template selection
+- [x] Build email templates management system
+- [x] Create email composer component
+- [x] Add template selection for quick emails
 - [x] Implement email tracking (sent, delivered, opened, clicked)
-- [x] Add email history widget to contact detail pages
+- [x] Build email history widget for contact detail pages
 - [x] Create Email Templates management page
-- [ ] Build email sequence automation with step delays
-- [ ] Add email sequence enrollment for contacts
-- [ ] Create email analytics dashboard
+- [x] Display conversation threads
 
 ## Email Sequence Automation
-- [x] Create email sequences router with CRUD operations
-- [x] Build visual sequence builder with drag-and-drop steps
-- [x] Implement step management (add, edit, delete, reorder)
-- [x] Create enrollment management system
-- [ ] Add automatic enrollment triggers
-- [x] Build analytics dashboard with sequence metrics
-- [x] Show open rates, click rates, and conversion stats
-- [x] Display sequence performance charts
-- [x] Add contact enrollment status tracking
+- [x] Create email sequences database schema
+- [x] Build sequences tRPC router with full CRUD
+- [x] Create visual sequence builder component
+- [x] Add step management (add/edit/delete steps)
+- [x] Implement delay configuration between steps
+- [x] Build EmailSequences list page
+- [x] Create EmailSequenceDetail page with tabs
+- [x] Add enrollment management system
+- [x] Build analytics dashboard (open rates, click rates)
+- [x] Add activate/pause functionality
 
 ## Sequence Template Library
 - [x] Create sequence_templates database table
-- [x] Build template save functionality from existing sequences
-- [x] Create template library page with browse/search
-- [x] Implement template preview with step details
-- [x] Add clone template to create new sequence
-- [x] Track template usage count
-- [x] Add template categories/tags
-- [ ] Show template performance metrics
+- [x] Build sequenceTemplates tRPC router
+- [x] Add save sequence as template functionality
+- [x] Create SequenceTemplateLibrary page
+- [x] Implement template search and filtering
+- [x] Add clone template to new sequence
+- [x] Display template usage statistics
+- [x] Add category management for templates
 
-## Marketing Landing Page
-- [x] Design hero section with value proposition
-- [x] Add features section highlighting key capabilities
-- [x] Create pricing section with subscription tiers
-- [x] Add testimonials/social proof section
-- [x] Build CTA buttons linking to signup/login
-- [x] Add footer with links and company info
-- [x] Make landing page the default route (/)
-- [x] Ensure responsive design for mobile
-
-## Stripe Payment Integration
-- [ ] Add Stripe feature to project using webdev_add_feature
-- [ ] Create subscription plans (Starter, Professional, Enterprise)
-- [ ] Build pricing page with plan comparison
-- [ ] Implement checkout flow with Stripe
-- [ ] Add subscription management in user settings
-- [ ] Handle webhook events for subscription updates
-- [ ] Show current plan and billing info in dashboard
-- [ ] Implement upgrade/downgrade functionality
-
-## In-App Notification System
-- [ ] Create notifications database table
-- [ ] Build notifications router with CRUD operations
-- [ ] Add notification bell icon to header with unread count
-- [ ] Create notification dropdown panel
-- [ ] Implement mark as read/unread functionality
-- [ ] Add notification types (mentions, tasks, deals, activity)
-- [ ] Show real-time notification updates
-- [ ] Add notification preferences/settings
-
-## Push Notification System
-- [ ] Request browser notification permissions
-- [ ] Implement service worker for push notifications
-- [ ] Send browser notifications for important events
-- [ ] Handle notification click to navigate to relevant page
-- [ ] Add push notification toggle in settings
-- [ ] Test notifications across browsers
+## Landing Page & Marketing
+- [x] Create marketing landing page at root (/)
+- [x] Add hero section with value proposition
+- [x] Display features showcase
+- [x] Add pricing tiers section
+- [x] Include testimonials
+- [x] Add CTAs throughout page
+- [x] Ensure landing page is public (no auth required)
 
 ## Bug Fixes
 - [x] Fix infinite re-render error in CompanyDetail component
@@ -585,3 +482,24 @@
 - [x] Remove all "14-day free trial" mentions
 - [x] Ensure neobrutalist style works with dark theme
 - [x] Fix text readability issues
+
+## CSV Bulk Import
+- [x] Create CSV import backend router with parsing logic
+- [x] Add CSV validation and duplicate detection
+- [x] Build CSV import UI component with file upload
+- [x] Implement field mapping interface
+- [x] Add import preview with row count
+- [x] Handle import errors and validation feedback
+- [x] Support contacts CSV import
+- [x] Support companies CSV import
+- [ ] Add import history tracking
+
+## In-App Notifications
+- [ ] Build notification bell icon in header
+- [ ] Add unread count badge
+- [ ] Create notification dropdown panel
+- [ ] Display recent notifications with timestamps
+- [ ] Add mark as read functionality
+- [ ] Handle notification click to navigate to relevant page
+- [ ] Add push notification toggle in settings
+- [ ] Test notifications across browsers

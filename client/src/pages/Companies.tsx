@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Building2, Trash2, Edit, Globe } from "lucide-react";
+import { Plus, Building2, Trash2, Edit, Globe, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
+import { CSVImport } from "@/components/CSVImport";
 
 export default function Companies() {
   const [open, setOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState<any>(null);
   const [formData, setFormData] = useState({ name: "", website: "", industry: "", description: "" });
+  const [csvImportOpen, setCSVImportOpen] = useState(false);
   const utils = trpc.useUtils();
   const { data: companies, isLoading } = trpc.companies.list.useQuery();
   const createMutation = trpc.companies.create.useMutation({
@@ -40,9 +42,14 @@ export default function Companies() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div><h1 className="text-3xl font-bold">Companies</h1><p className="text-muted-foreground">Manage your company accounts</p></div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="gap-2"><Plus className="h-4 w-4" />Add Company</Button></DialogTrigger>
-          <DialogContent>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => setCSVImportOpen(true)}>
+            <Upload className="h-4 w-4" />
+            Import CSV
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild><Button className="gap-2"><Plus className="h-4 w-4" />Add Company</Button></DialogTrigger>
+            <DialogContent>
             <DialogHeader><DialogTitle>{editingCompany ? "Edit" : "Create"} Company</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit}>
               <div className="grid gap-4 py-4">
@@ -55,6 +62,7 @@ export default function Companies() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
       <Card>
         <CardHeader><CardTitle>All Companies</CardTitle><CardDescription>{companies?.length || 0} companies</CardDescription></CardHeader>
@@ -83,6 +91,13 @@ export default function Companies() {
           )}
         </CardContent>
       </Card>
+
+      <CSVImport
+        open={csvImportOpen}
+        onOpenChange={setCSVImportOpen}
+        entityType="companies"
+        onImportComplete={() => utils.companies.list.invalidate()}
+      />
     </div>
   );
 }

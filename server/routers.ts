@@ -22,6 +22,7 @@ import { emailTrackingRouter } from "./routers/emailTracking";
 import { emailSequencesRouter } from "./routers/emailSequences";
 import { sequenceTemplatesRouter } from "./routers/sequenceTemplates";
 import { stripeRouter } from "./routers/stripe";
+import { csvImportRouter } from "./routers/csvImport";
 import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
@@ -91,6 +92,7 @@ export const appRouter = router({
   knowledge: knowledgeRouter,
   attachments: attachmentsRouter,
   bulk: bulkRouter,
+  csvImport: csvImportRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
