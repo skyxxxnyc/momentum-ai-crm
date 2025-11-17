@@ -75,7 +75,8 @@ export function EditableField({
       <div
         onClick={() => setIsEditing(true)}
         className={cn(
-          "cursor-pointer hover:bg-accent/50 rounded px-2 py-1 -mx-2 -my-1 transition-colors min-h-[2rem] flex items-center",
+          "cursor-pointer hover:bg-accent/50 rounded px-2 py-1 -mx-2 -my-1 transition-colors min-h-[2rem]",
+          type === "textarea" ? "whitespace-pre-wrap" : "flex items-center",
           !value && "text-muted-foreground italic",
           displayClassName
         )}

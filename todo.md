@@ -269,6 +269,7 @@
 - [x] Add save/cancel buttons for edit mode
 - [x] Implement optimistic updates for instant feedback
 - [ ] Add validation for required fields
+- [x] Add formatting support for about/description sections in view and edit modes
 
 ## Enhanced Company Detail Page
 - [x] Display comprehensive company information
