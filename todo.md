@@ -164,6 +164,15 @@
 - [x] Notion integration (via MCP - configured in Manus)
 - [ ] Gmail OAuth integration (needs GMAIL_CLIENT_ID)
 
+## Pica OS Integration Migration
+- [x] Create Pica email service for Gmail API
+- [x] Create Pica calendar service for Google Calendar API
+- [x] Update email router to use Pica Gmail passthrough
+- [x] Update calendar router to use Pica Calendar quickAdd
+- [x] Add Pica environment variables (PICA_SECRET_KEY, PICA_GMAIL_CONNECTION_KEY, PICA_GOOGLE_CALENDAR_CONNECTION_KEY)
+- [x] Test email sending via Pica Gmail
+- [x] Test calendar event creation via Pica Calendar
+
 ## Infrastructure
 - [x] Database schema design and migration (19 tables including schedules and blog posts)
 - [x] Backend API with tRPC procedures

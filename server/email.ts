@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { sendEmailViaPica, sendHtmlEmailViaPica } from "./services/picaEmail";
 
 // Initialize Resend client
 let resendClient: Resend | null = null;
@@ -8,6 +9,11 @@ function getResendClient() {
     resendClient = new Resend(process.env.RESEND_API_KEY);
   }
   return resendClient;
+}
+
+// Check if Pica is configured
+function isPicaConfigured(): boolean {
+  return !!(process.env.PICA_SECRET_KEY && process.env.PICA_GMAIL_CONNECTION_KEY);
 }
 
 export interface SendEmailParams {
@@ -27,13 +33,41 @@ export interface EmailTemplate {
 }
 
 /**
- * Send email using Resend
+ * Send email using Pica Gmail API or Resend (fallback)
  */
 export async function sendEmail(params: SendEmailParams) {
+  // Use Pica if configured, otherwise fall back to Resend
+  if (isPicaConfigured()) {
+    try {
+      // Pica only supports single recipient for now
+      const to = Array.isArray(params.to) ? params.to[0] : params.to;
+      
+      const result = await sendHtmlEmailViaPica({
+        to,
+        subject: params.subject,
+        body: params.html, // Use HTML as plain text fallback
+        html: params.html,
+        from: params.from,
+      });
+
+      return {
+        success: true,
+        messageId: result.id,
+      };
+    } catch (error: any) {
+      console.error("Failed to send email via Pica:", error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  // Fallback to Resend
   const client = getResendClient();
   
   if (!client) {
-    throw new Error("Email service not configured. Please add RESEND_API_KEY to environment variables.");
+    throw new Error("Email service not configured. Please add PICA credentials or RESEND_API_KEY to environment variables.");
   }
 
   try {
@@ -53,7 +87,7 @@ export async function sendEmail(params: SendEmailParams) {
       error: result.error,
     };
   } catch (error: any) {
-    console.error("Failed to send email:", error);
+    console.error("Failed to send email via Resend:", error);
     return {
       success: false,
       error: error.message,
