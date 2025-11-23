@@ -439,6 +439,16 @@
 - [x] Build analytics dashboard (open rates, click rates)
 - [x] Add activate/pause functionality
 
+## Enhanced Email Sequence UI
+- [x] Install @dnd-kit/core for drag-and-drop functionality
+- [x] Create DraggableSequenceStep component
+- [x] Build SequenceCanvas with drop zones
+- [x] Add step reordering via drag-and-drop
+- [x] Create SequencePreview modal component
+- [x] Build rich text email editor for steps
+- [ ] Add conditional logic UI (if/then branches)
+- [x] Implement step duplication feature
+
 ## Sequence Template Library
 - [x] Create sequence_templates database table
 - [x] Build sequenceTemplates tRPC router

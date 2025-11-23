@@ -354,4 +354,27 @@ export const emailSequencesRouter = router({
 
       return { success: true };
     }),
+
+  // Reorder sequence steps
+  reorderSteps: protectedProcedure
+    .input(
+      z.object({
+        sequenceId: z.number(),
+        stepIds: z.array(z.number()),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Update step numbers based on new order
+      for (let i = 0; i < input.stepIds.length; i++) {
+        await db
+          .update(emailSequenceSteps)
+          .set({ stepNumber: i + 1 })
+          .where(eq(emailSequenceSteps.id, input.stepIds[i]));
+      }
+
+      return { success: true };
+    }),
 });

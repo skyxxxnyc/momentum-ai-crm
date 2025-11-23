@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, BarChart3, Users, Mail, TrendingUp, BookTemplate } from "lucide-react";
-import { SequenceBuilder } from "@/components/SequenceBuilder";
+import { SequenceBuilderEnhanced } from "@/components/SequenceBuilderEnhanced";
 import { toast } from "sonner";
 
 export default function EmailSequenceDetail() {
@@ -216,7 +216,7 @@ export default function EmailSequenceDetail() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SequenceBuilder sequenceId={sequenceId} />
+                <SequenceBuilderEnhanced sequenceId={sequenceId} />
               </CardContent>
             </Card>
           </TabsContent>
