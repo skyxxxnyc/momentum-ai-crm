@@ -459,6 +459,16 @@
 - [x] Display template usage statistics
 - [x] Add category management for templates
 
+## Pre-built Template Library
+- [x] Create seed data for cold outreach sequences
+- [x] Create seed data for onboarding sequences
+- [x] Create seed data for re-engagement sequences
+- [x] Create seed data for follow-up sequences
+- [x] Build template preview modal
+- [x] Add template categories and tags
+- [ ] Implement template rating system
+- [x] Add one-click template cloning
+
 ## Landing Page & Marketing
 - [x] Create marketing landing page at root (/)
 - [x] Add hero section with value proposition
