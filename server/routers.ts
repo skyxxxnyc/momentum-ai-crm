@@ -23,6 +23,7 @@ import { emailSequencesRouter } from "./routers/emailSequences";
 import { sequenceTemplatesRouter } from "./routers/sequenceTemplates";
 import { stripeRouter } from "./routers/stripe";
 import { csvImportRouter } from "./routers/csvImport";
+import { emailVariablesRouter } from "./routers/emailVariables";
 import { logActivity } from "./lib/activityLogger";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
@@ -79,6 +80,7 @@ export const appRouter = router({
   emailTracking: emailTrackingRouter,
   emailSequences: emailSequencesRouter,
   sequenceTemplates: sequenceTemplatesRouter,
+  emailVariables: emailVariablesRouter,
   stripe: stripeRouter,
   system: systemRouter,
   ai: aiRouter,

@@ -16,6 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Sparkles } from "lucide-react";
 import { Streamdown } from "streamdown";
+import { VariableInserter } from "@/components/VariableInserter";
 
 interface SequenceStep {
   id?: number;
@@ -42,6 +43,42 @@ export function EmailStepEditor({
   const [body, setBody] = useState(step?.body || "");
   const [delayDays, setDelayDays] = useState(step?.delayDays || 0);
   const [isSaving, setIsSaving] = useState(false);
+  const bodyTextareaRef = useState<HTMLTextAreaElement | null>(null);
+  const subjectInputRef = useState<HTMLInputElement | null>(null);
+
+  const insertVariable = (variable: string, target: 'subject' | 'body') => {
+    if (target === 'subject') {
+      const input = subjectInputRef[0];
+      if (input) {
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
+        const newValue = subject.substring(0, start) + variable + subject.substring(end);
+        setSubject(newValue);
+        // Set cursor position after inserted variable
+        setTimeout(() => {
+          input.focus();
+          input.setSelectionRange(start + variable.length, start + variable.length);
+        }, 0);
+      } else {
+        setSubject(subject + variable);
+      }
+    } else {
+      const textarea = bodyTextareaRef[0];
+      if (textarea) {
+        const start = textarea.selectionStart || 0;
+        const end = textarea.selectionEnd || 0;
+        const newValue = body.substring(0, start) + variable + body.substring(end);
+        setBody(newValue);
+        // Set cursor position after inserted variable
+        setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(start + variable.length, start + variable.length);
+        }, 0);
+      } else {
+        setBody(body + variable);
+      }
+    }
+  };
 
   const handleSave = async () => {
     if (!subject.trim() || !body.trim()) {
@@ -78,18 +115,6 @@ export function EmailStepEditor({
     onOpenChange(newOpen);
   };
 
-  const insertVariable = (variable: string) => {
-    setBody((prev) => prev + `{{${variable}}}`);
-  };
-
-  const variables = [
-    { key: "contact_name", label: "Contact Name" },
-    { key: "contact_email", label: "Contact Email" },
-    { key: "company_name", label: "Company Name" },
-    { key: "contact_title", label: "Contact Title" },
-    { key: "sender_name", label: "Your Name" },
-  ];
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -123,9 +148,13 @@ export function EmailStepEditor({
 
           {/* Subject Line */}
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject Line</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="subject">Subject Line</Label>
+              <VariableInserter onInsert={(v) => insertVariable(v, 'subject')} />
+            </div>
             <Input
               id="subject"
+              ref={(el) => { subjectInputRef[1](el); }}
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Enter email subject..."
@@ -136,17 +165,20 @@ export function EmailStepEditor({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="body">Email Body</Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  // TODO: Integrate with AI to generate email content
-                  alert("AI generation coming soon!");
-                }}
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Generate with AI
-              </Button>
+              <div className="flex gap-2">
+                <VariableInserter onInsert={(v) => insertVariable(v, 'body')} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    // TODO: Integrate with AI to generate email content
+                    alert("AI generation coming soon!");
+                  }}
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate with AI
+                </Button>
+              </div>
             </div>
 
             <Tabs defaultValue="edit" className="w-full">
@@ -158,33 +190,16 @@ export function EmailStepEditor({
               <TabsContent value="edit" className="space-y-4">
                 <Textarea
                   id="body"
+                  ref={(el) => { bodyTextareaRef[1](el); }}
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  placeholder="Write your email content here... You can use HTML or Markdown."
+                  placeholder="Write your email content here... Use {{variable_name}} for personalization."
                   className="min-h-[300px] font-mono text-sm"
                 />
-
-                {/* Variable Insertion */}
-                <Card>
-                  <CardContent className="pt-4">
-                    <p className="text-sm font-medium mb-2">Insert Variables:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {variables.map((variable) => (
-                        <Badge
-                          key={variable.key}
-                          variant="outline"
-                          className="cursor-pointer hover:bg-accent"
-                          onClick={() => insertVariable(variable.key)}
-                        >
-                          {variable.label}
-                        </Badge>
-                      ))}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Click to insert. Variables will be replaced with actual values when sent.
-                    </p>
-                  </CardContent>
-                </Card>
+                <p className="text-xs text-muted-foreground">
+                  Use the 'Insert Variable' button above to add personalization placeholders.
+                  Variables will be automatically replaced with actual data when emails are sent.
+                </p>
               </TabsContent>
 
               <TabsContent value="preview">
