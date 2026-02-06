@@ -191,31 +191,37 @@ export default function DashboardLayout({
           style={{ "--sidebar-width": `${isCollapsed ? COLLAPSED_WIDTH : sidebarWidth}px` } as CSSProperties}
           className="border-r border-border"
         >
-          <SidebarHeader className="border-b border-border p-4">
-            <div className="flex items-center gap-3 justify-center">
-              <img src={APP_LOGO} alt={APP_TITLE} className="h-8 w-8" />
+          <SidebarHeader className="border-b border-border p-8">
+            <div className="flex flex-col gap-1 items-start">
               {!isCollapsed && (
-                <span className="text-lg">
-                  <span className="font-light">sia</span>
-                  <span className="font-bold">CRM</span>
-                </span>
+                <>
+                  <span className="text-3xl font-black uppercase leading-none tracking-tighter">
+                    Momentum
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                    AI CRM
+                  </span>
+                </>
+              )}
+              {isCollapsed && (
+                <span className="text-xl font-black uppercase text-primary">M</span>
               )}
             </div>
           </SidebarHeader>
 
-          <SidebarContent>
+          <SidebarContent className="p-4">
             {!isCollapsed && (
-              <div className="px-3 py-2">
+              <div className="px-4 py-6">
                 <input
                   type="text"
-                  placeholder="Search pages..."
+                  placeholder="SEARCH..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-0 py-2 text-xs font-bold uppercase tracking-widest bg-transparent border-b-2 border-border focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
                 />
               </div>
             )}
-            <SidebarMenu>
+            <SidebarMenu className="gap-6">
               {menuGroups
                 .map((group) => ({
                   ...group,
@@ -234,13 +240,13 @@ export default function DashboardLayout({
                       <SidebarMenuItem key={item.path}>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <SidebarMenuButton asChild>
+                            <SidebarMenuButton asChild className="rounded-none h-12">
                               <a href={item.path} className="flex items-center justify-center w-full">
                                 <item.icon className="h-5 w-5" />
                               </a>
                             </SidebarMenuButton>
                           </TooltipTrigger>
-                          <TooltipContent side="right">
+                          <TooltipContent side="right" className="rounded-none border-2 border-foreground bg-foreground text-background font-bold uppercase tracking-widest text-[10px]">
                             <p>{item.label}</p>
                           </TooltipContent>
                         </Tooltip>
@@ -249,37 +255,23 @@ export default function DashboardLayout({
                   </div>
                 ) : (
                   // Expanded mode: show groups with labels
-                  <Collapsible
-                    key={group.label}
-                    open={openGroups.includes(group.label)}
-                    onOpenChange={() => toggleGroup(group.label)}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton className="w-full">
-                          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            {group.label}
-                          </span>
-                          <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {group.items.map((item) => (
-                            <SidebarMenuSubItem key={item.path}>
-                              <SidebarMenuSubButton asChild>
-                                <a href={item.path} className="flex items-center gap-3 px-3 py-2">
-                                  <item.icon className="h-4 w-4" />
-                                  <span>{item.label}</span>
-                                </a>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  <div key={group.label} className="space-y-2">
+                    <div className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                      {group.label}
+                    </div>
+                    <div className="space-y-1">
+                      {group.items.map((item) => (
+                        <SidebarMenuItem key={item.path}>
+                          <SidebarMenuButton asChild className="rounded-none h-10 hover:bg-muted group">
+                            <a href={item.path} className="flex items-center gap-3 px-4">
+                              <item.icon className="h-4 w-4 group-hover:text-primary transition-colors" />
+                              <span className="text-xs font-bold uppercase tracking-wider">{item.label}</span>
+                            </a>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </div>
+                  </div>
                 )
               )}
             </SidebarMenu>
@@ -334,13 +326,22 @@ export default function DashboardLayout({
           </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset className="flex-1">
-          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-border bg-background px-6">
-            <SidebarTrigger />
-            <div className="flex-1" />
-            <NotificationCenter />
+        <SidebarInset className="flex-1 bg-background">
+          <header className="sticky top-0 z-10 flex h-24 items-center gap-4 border-b border-border bg-background px-12">
+            <SidebarTrigger className="rounded-none border-2 border-foreground" />
+            <div className="flex-1 flex flex-col items-start">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">
+                MOMENTUM / SYSTEM / v1.0
+              </span>
+              <h2 className="text-xl font-black uppercase tracking-tight">
+                {menuGroups.flatMap(g => g.items).find(i => i.path === window.location.pathname)?.label || "Overview"}
+              </h2>
+            </div>
+            <div className="flex items-center gap-6">
+              <NotificationCenter />
+            </div>
           </header>
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 p-12 max-w-[1600px] mx-auto w-full">{children}</main>
         </SidebarInset>
         </div>
       </SidebarProvider>

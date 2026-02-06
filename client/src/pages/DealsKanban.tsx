@@ -55,23 +55,25 @@ export default function DealsKanban() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/deals">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to List
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold">Deals Pipeline</h1>
-            <p className="text-muted-foreground">Drag and drop to update deal stages</p>
-          </div>
+    <div className="space-y-12">
+      <div className="flex items-center justify-between border-b-4 border-foreground pb-8">
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">
+            CRM / PIPELINE / v1.0
+          </span>
+          <h1 className="text-4xl font-black uppercase tracking-tighter leading-none">
+            Deals Pipeline
+          </h1>
         </div>
+        <Link href="/deals">
+          <Button variant="outline" size="sm" className="swiss-button">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            LIST VIEW
+          </Button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-0 bg-border border border-border">
         {STAGES.map((stage) => {
           const stageDeals = getDealsByStage(stage.id);
           const totalValue = getTotalValue(stage.id);
@@ -79,71 +81,70 @@ export default function DealsKanban() {
           return (
             <div
               key={stage.id}
-              className="flex flex-col"
+              className="flex flex-col bg-background border-r border-border last:border-r-0"
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(stage.id)}
             >
-              <Card className="flex-1">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${stage.color}`} />
-                      {stage.label}
-                    </CardTitle>
-                    <Badge variant="secondary">{stageDeals.length}</Badge>
+              <div className="p-4 border-b-4 border-foreground bg-muted/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
+                    {stage.label}
+                  </span>
+                  <span className="text-[10px] font-black px-1.5 py-0.5 border border-foreground bg-foreground text-background">
+                    {stageDeals.length}
+                  </span>
+                </div>
+                <div className="text-sm font-black uppercase tracking-tighter">
+                  ${(totalValue / 1000).toFixed(1)}K
+                </div>
+              </div>
+              
+              <div className="flex-1 p-3 space-y-3 min-h-[600px] bg-muted/5">
+                {stageDeals.length === 0 ? (
+                  <div className="text-center py-12 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
+                    EMPTY
                   </div>
-                  <CardDescription className="text-xs">
-                    ${(totalValue / 1000).toFixed(1)}K total
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {stageDeals.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground text-sm">
-                      No deals
-                    </div>
-                  ) : (
-                    stageDeals.map((deal) => (
-                      <Card
-                        key={deal.id}
-                        draggable
-                        onDragStart={() => handleDragStart(deal)}
-                        className="cursor-move hover:shadow-lg transition-shadow border-border"
-                      >
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <h3 className="font-semibold text-sm line-clamp-2">
-                              {deal.title}
-                            </h3>
-                            <div className="flex items-center justify-between text-xs">
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <DollarSign className="h-3 w-3" />
-                                <span>${(deal.value || 0).toLocaleString()}</span>
-                              </div>
-                              <div className="flex items-center gap-1 text-primary">
-                                <TrendingUp className="h-3 w-3" />
-                                <span>{deal.probability}%</span>
-                              </div>
-                            </div>
-                            {(deal.momentumScore || 0) > 0 && (
-                              <div className="flex items-center gap-2">
-                                <div className="h-1 flex-1 bg-muted rounded-full overflow-hidden">
-                                  <div
-                                    className="h-full bg-primary"
-                                    style={{ width: `${deal.momentumScore}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs text-muted-foreground">
-                                  {deal.momentumScore}
-                                </span>
-                              </div>
-                            )}
+                ) : (
+                  stageDeals.map((deal) => (
+                    <div
+                      key={deal.id}
+                      draggable
+                      onDragStart={() => handleDragStart(deal)}
+                      className="bg-background border border-border p-4 hover:border-primary transition-all cursor-move group"
+                    >
+                      <div className="space-y-4">
+                        <h3 className="text-xs font-black uppercase tracking-tight group-hover:text-primary transition-colors">
+                          {deal.title}
+                        </h3>
+                        <div className="flex items-end justify-between">
+                          <div className="flex flex-col">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-1">VALUE</span>
+                            <span className="text-sm font-bold tracking-tighter">${(deal.value || 0).toLocaleString()}</span>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </CardContent>
-              </Card>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-1">PROB</span>
+                            <span className="text-sm font-black tracking-tighter text-primary">{deal.probability}%</span>
+                          </div>
+                        </div>
+                        {(deal.momentumScore || 0) > 0 && (
+                          <div className="pt-2 border-t border-border/50">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">MOMENTUM</span>
+                              <span className="text-[10px] font-black">{deal.momentumScore}</span>
+                            </div>
+                            <div className="h-1 bg-muted">
+                              <div
+                                className="h-full bg-foreground"
+                                style={{ width: `${deal.momentumScore}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           );
         })}

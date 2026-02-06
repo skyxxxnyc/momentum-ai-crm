@@ -70,48 +70,55 @@ export function ActivityFeed() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Activity className="h-5 w-5" />
-          Recent Activity
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {activities.map((activity) => (
-            <div key={activity.id} className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary/10 text-primary">
+    <div className="swiss-card">
+      <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-foreground">
+        <h3 className="text-xl font-black uppercase tracking-tight">Recent Activity</h3>
+        <Activity className="h-5 w-5 text-primary" />
+      </div>
+      <div className="space-y-0">
+        {activities.map((activity) => (
+          <div key={activity.id} className="flex items-start gap-6 py-6 border-b border-border last:border-0 group">
+            <div className="flex-none">
+              <Avatar className="h-12 w-12 rounded-none border border-border">
+                <AvatarFallback className="bg-background text-foreground font-black">
                   {activity.userName?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium text-sm">{activity.userName || "User"}</span>
-                  <span className={`text-sm ${getActionColor(activity.action)}`}>
-                    {activity.action}
-                  </span>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    {getIcon(activity.entityType)}
-                    <span className="text-sm">{activity.entityType}</span>
-                  </div>
-                </div>
-                {activity.entityName && (
-                  <div className="text-sm font-medium mt-1">{activity.entityName}</div>
-                )}
-                {activity.description && (
-                  <div className="text-xs text-muted-foreground mt-1">{activity.description}</div>
-                )}
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <Clock className="h-3 w-3" />
-                  {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
-                </div>
-              </div>
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-xs font-black uppercase tracking-widest">{activity.userName || "User"}</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                </span>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 border ${getActionColor(activity.action).replace('text-', 'border-').replace('text-', 'text-')}`}>
+                  {activity.action}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  {activity.entityType}
+                </span>
+              </div>
+              {activity.entityName && (
+                <div className="text-lg font-black uppercase tracking-tighter mt-2 group-hover:text-primary transition-colors line-clamp-1">
+                  {activity.entityName}
+                </div>
+              )}
+              {activity.description && (
+                <div className="text-xs text-muted-foreground mt-1 font-medium leading-relaxed">
+                  {activity.description}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8">
+        <button className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-primary transition-colors flex items-center gap-2">
+          View All Activity <TrendingUp className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
   );
 }

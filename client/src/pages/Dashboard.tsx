@@ -24,32 +24,56 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b-8 border-foreground pb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Welcome to Momentum AI</p>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">
+            SYSTEM / OVERVIEW
+          </span>
+          <h1 className="text-6xl font-black uppercase tracking-tighter leading-none mt-2">
+            Dashboard
+          </h1>
+          <p className="text-sm font-bold uppercase tracking-widest text-primary mt-2">
+            Momentum AI Intelligence Unit
+          </p>
         </div>
-        <Link href="/ai-chat"><Button className="gap-2 w-full sm:w-auto btn-brutal"><Zap className="h-4 w-4" />AI Assistant</Button></Link>
+        <Link href="/ai-chat">
+          <Button className="gap-2 w-full md:w-auto swiss-button">
+            <Zap className="h-4 w-4" />
+            AI ASSISTANT
+          </Button>
+        </Link>
       </div>
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+
+      <div className="grid gap-px bg-border grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-border">
         {kpiCards.map((kpi) => (
-          <Card key={kpi.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold">{kpi.value}</div></CardContent>
-          </Card>
+          <div key={kpi.title} className="bg-background p-8 flex flex-col gap-4">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              {kpi.title}
+            </span>
+            <div className="text-5xl font-black tracking-tighter">{kpi.value}</div>
+            <div className="h-1 w-12 bg-primary" />
+          </div>
         ))}
       </div>
       
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+      <div className="grid gap-12 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <ActivityFeed />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-12">
           <RecentlyViewed />
+          <Card className="rounded-none border-2 border-primary bg-primary/5">
+            <CardHeader>
+              <CardTitle className="text-sm font-black uppercase tracking-widest">System Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-wider">All Systems Operational</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
